@@ -24,7 +24,7 @@
         .student-item {
             background: #fff;
             border: 2px solid #27ae60;
-            border-radius: 12px;
+            border-radius: 10px;
             padding: 12px 16px;
             margin-bottom: 10px;
             display: flex;
@@ -44,7 +44,7 @@
             transform: translateY(-2px);
         }
         .card-container {
-            max-width: 480px;
+            max-width: 460px;
             margin: 0 auto;
             display: none;
         }
@@ -55,11 +55,11 @@
             background: linear-gradient(135deg,#f6f8fb 0%,#ffffff 100%);
         }
         .card h1 {
-            font-size: 18px;
+            font-size: 14px;
             margin-bottom: 8px;
         }
         .card h2 {
-            font-size: 14px;
+            font-size: 12px;
             margin-bottom: 10px;
         }
         .card p {
@@ -109,6 +109,7 @@
         <p><strong>Sinif:</strong> <span id="cardGrade"></span></p>
         <p><strong>Otaq:</strong> <span id="cardRoom"></span></p>
         <p><strong>Yer:</strong> <span id="cardSeat"></span></p>
+        <p><strong>BSP LearnUp tələbəsidir:</strong> <span id="cardBsp"></span></p>
         <p><strong>Tarix:</strong> 2 Noyabr 2025</p>
         <p><strong>Saat:</strong> 10:00</p>
         <p><strong>Ünvan:</strong> Bakıxanov qəs., Villa Plaza</p>
@@ -128,16 +129,15 @@
                 : "https://exam-registration.onrender.com";
 
             const res = await fetch(`${BASE_URL}/api/students`);
-
             const students = await res.json();
             container.innerHTML = '';
             students.forEach(student => {
                 const div = document.createElement('div');
                 div.className = 'student-item';
                 div.innerHTML = `
-                    ${student.name} ${student.surname} | Sinif: ${student.grade} | Otaq: ${student.room?.roomNo || '-'}
-                    <button onclick='showExamCard(${JSON.stringify(student)})'>Buraxılış Vərəqəsi</button>
-                `;
+          ${student.name} ${student.surname} | Sinif: ${student.grade} | Otaq: ${student.room?.roomNo || '-'}
+          <button onclick='showExamCard(${JSON.stringify(student)})'>Buraxılış Vərəqəsi</button>
+        `;
                 container.appendChild(div);
             });
         } catch (err) {
@@ -152,87 +152,106 @@
         document.getElementById('cardCode').innerText = student.studentCode;
         document.getElementById('cardRoom').innerText = student.room?.roomNo || '-';
         document.getElementById('cardSeat').innerText = student.seatNo || '1';
-
-        document.getElementById('cardContainer').style.display = 'block';
+        document.getElementById('cardBsp').innerHTML = student.bspStudent
+            ? "<span style='color:green;font-weight:bold;'>Bəli ✅</span>"
+            : "<span style='color:red;font-weight:bold;'>Xeyr ❌</span>";        document.getElementById('cardContainer').style.display = 'block';
         document.getElementById('cardContainer').scrollIntoView({behavior: 'smooth'});
     }
 
     function printCard() {
-        const card = document.getElementById('printCard').outerHTML;
+        const name = document.getElementById('cardName').textContent;
+        const code = document.getElementById('cardCode').textContent;
+        const grade = document.getElementById('cardGrade').textContent;
+        const room = document.getElementById('cardRoom').textContent;
+        const seat = document.getElementById('cardSeat').textContent;
+        const cardBsp = document.getElementById('cardBsp').textContent;
+
         const printWindow = window.open('', '_blank');
         printWindow.document.write(`
-        <!DOCTYPE html>
-        <html lang="az">
-        <head>
-          <meta charset="UTF-8">
-          <title>Buraxılış Vərəqəsi</title>
-          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-          <style>
-            @page { margin: 0; size: A4; }
-            body {
-                margin: 0;
-                font-family: 'Inter', sans-serif;
-                display: flex;
-                padding: 30px;
-                gap: 30px;
-            }
-            .left {
-                width: 40%;
-                transform: scale(0.9);
-                transform-origin: top left;
-            }
-            .card img {
-                width: 130px;
-                height: 130px;
-            }
-            .right {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start;
-                font-size: 14px;
-                line-height: 1.6;
-                gap: 8px;
-            }
-            .footer {
-                margin-top: auto;
-                font-weight: 600;
-                color: #27ae60;
-            }
-            @media print {
-                body { background: white; }
-            }
-          </style>
-        </head>
-        <body>
-            <div class="left">
-                ${card}
+      <!DOCTYPE html>
+      <html lang="az">
+      <head>
+        <meta charset="UTF-8">
+        <title>Riyaziyyat Buraxılış Sınaq 2</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <style>
+          @page { margin: 0; size: A4; }
+          body {
+            margin: 0;
+            padding: 40px;
+            font-family: 'Inter', sans-serif;
+            background: #f6f8fa;
+          }
+          .ticket {
+            width: 90%;
+            margin: auto;
+            background: #fff;
+            border: 8px solid #27ae60;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            padding: 30px;
+          }
+          .info p {
+            margin: 6px 0;
+            font-size: 16px;
+          }
+          .social h3 {
+            color: #ff7b00;
+            margin-bottom: 12px;
+          }
+          .qr img {
+            width: 120px;
+            height: 120px;
+            border: 2px solid #27ae60;
+          }
+          .footer {
+            text-align: center;
+            font-weight: 600;
+            color: #27ae60;
+            margin-top: 20px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="ticket">
+          <div class="left">
+            <h1>Riyaziyyat Buraxılış Sınaq 2</h1>
+            <div class="info">
+              <p><strong>Ad Soyad Ata adı:</strong> ${name}</p>
+              <p><strong>İş nömrəsi:</strong> ${code}</p>
+              <p><strong>Sinif:</strong> ${grade}</p>
+              <p><strong>Otaq:</strong> ${room}</p>
+              <p><strong>Yer:</strong> ${seat}</p>
+              <p><strong>BSP LearnUp tələbəsidir:</strong> ${cardBsp}</p>
+              <p><strong>Tarix:</strong> 02.11.2025</p>
+              <p><strong>Saat:</strong> 10:00</p>
+              <p><strong>Ünvan:</strong> Bakıxanov qəs., Villa Plaza</p>
             </div>
-            <div class="right">
-                <p>📱 Bizi izləyin:</p>
-                <p>🎥 YouTube: Riyaziyyat hər kəs üçün</p>
-                <p>📸 Instagram: math.bsp.az | bsplearnup</p>
-                <p>💬 Telegram: Riyaziyyat hər kəs üçün</p>
-                <p>🌐 Sayt: mathbsp.az</p>
-                <p>📞 Əlaqə: 070 621 12 29</p>
-                <p class="footer">🧮 BSP LearnUp ilə fərq yarat!<br>“Əziyyət çək, zirvəyə qalx!”</p>
+           <p class="footer">🧮 BSP LearnUp ilə fərq yarat!<br>“Əziyyət çək, zirvəyə qalx!”</p>
+
+          </div>
+          <div class="right">
+            <div class="social">
+              <h3>📱 Bizi izləyin:</h3>
+              <p>🎥 YouTube: <b>Riyaziyyat hər kəs üçün</b></p>
+              <p>📸 Instagram: <b>math.bsp.az</b> | <b>bsplearnup</b></p>
+              <p>💬 Telegram: <b>riyaziyyatherkesucun</b></p>
+              <p>🌐 Sayt: <b>mathbsp.az</b></p>
+              <p>📞 Əlaqə: <b>070 621 12 29</b></p>
             </div>
-        </body>
-        </html>
-        `);
+            <div class="qr">
+              <img src="mathbsp-az-qr-code.png" alt="QR Kod">
+            </div>
+
+          </div>
+        </div>
+      </body>
+      </html>
+    `);
         printWindow.document.close();
         setTimeout(() => printWindow.print(), 300);
-    }
-
-    function downloadPDF() {
-        const element = document.getElementById('printCard');
-        html2pdf().set({
-            margin: 0,
-            filename: `${document.getElementById('cardName').innerText}_Giris_Karti.pdf`,
-            image: {type:'jpeg', quality:0.98},
-            html2canvas: {scale:3},
-            jsPDF: {unit:'mm', format:[60,120], orientation:'portrait'}
-        }).from(element).save();
     }
 
     loadStudents();
