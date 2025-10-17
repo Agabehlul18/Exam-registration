@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İmtahanların İdarə Paneli</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- eyni stil kodu --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #45ff79 0%, #008c27 50%, #ff8e3f 100%); min-height: 100vh; padding: 40px 20px; color: #fff; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.25); }
+        nav a { text-decoration: none; color: white; font-weight: 600; background: rgba(255,255,255,0.15); padding: 10px 18px; border-radius: 12px; margin-left: 10px; transition: 0.3s; }
+        nav a:hover { background: rgba(255,255,255,0.3); transform: translateY(-3px); }
+        .exam-form { max-width: 700px; margin: 0 auto 40px; background: rgba(255, 255, 255, 0.15); padding: 25px; border-radius: 20px; backdrop-filter: blur(10px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .exam-form h2 { text-align: center; margin-bottom: 15px; }
+        .exam-form input { width: 100%; padding: 12px; margin-bottom: 15px; border: none; border-radius: 10px; font-size: 1rem; }
+        .exam-form button { width: 100%; background: linear-gradient(135deg, #f97316, #ff9a64); border: none; border-radius: 10px; padding: 14px; color: #fff; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .exam-form button:hover { background: linear-gradient(135deg, #ea580c, #ffa06f); transform: translateY(-3px); }
+        table { width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); border-radius: 15px; overflow: hidden; }
+        th, td { padding: 12px 15px; text-align: center; }
+        th { background: rgba(255,255,255,0.25); color: #fff; }
+        tr:nth-child(even) { background: rgba(255,255,255,0.08); }
+        tr:hover { background: rgba(255,255,255,0.15); }
+        .action-btn { background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 8px; padding: 6px 10px; cursor: pointer; transition: 0.3s; }
+        .action-btn:hover { background: rgba(255,255,255,0.35); }
+        .search-container { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+        .search-container input { padding: 10px; border-radius: 10px; border: none; width: 200px; font-size: 1rem; }
+        .search-container button { background: #45ff79; color: white; border: none; border-radius: 10px; padding: 10px 20px; cursor: pointer; font-weight: 600; transition: 0.3s; }
+        .search-container button:hover { background: #77ff9c; }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>📘 İmtahanların İdarə Paneli</h1>
+    <nav>
+        <a href="index.html">🏠 Ana səhifə</a>
+        <a href="room.html">🏫 Otaqlar</a>
+        <a href="students.html">👨‍🎓 Tələbələr</a>
+    </nav>
+</header>
+
+<div class="exam-form">
+    <h2>Yeni İmtahan Əlavə Et</h2>
+    <input type="text" id="examName" placeholder="İmtahanın adı (məs: Riyaziyyat - Sınaq 2)" required>
+    <input type="number" id="grade" placeholder="Sinif (məs: 11)" required>
+    <input type="text" id="roomName" placeholder="Otaq adı (məs: Otaq A)" required>
+    <input type="datetime-local" id="examDate" required>
+    <button onclick="addExam()">Əlavə Et</button>
+</div>
+
+<div class="search-container">
+    <input type="number" id="searchGrade" placeholder="Sinif üzrə axtar">
+    <button onclick="filterByGrade()">Axtar</button>
+    <input type="text" id="searchRoom" placeholder="Otaq üzrə axtar">
+    <button onclick="filterByRoom()">Axtar</button>
+    <button onclick="getAllExams()">Bütün İmtahanlar</button>
+</div>
+
+<table id="examTable">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Ad</th>
+        <th>Sinif</th>
+        <th>Otaq</th>
+        <th>Tarix</th>
+        <th>Aktiv</th>
+        <th>Əməliyyatlar</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    const BASE_URL = "http://localhost:8080/api/exams";
+
+    async function getAllExams() {
+        const res = await fetch(BASE_URL);
+        const exams = await res.json();
+        renderTable(exams);
+    }
+
+    async function addExam() {
+        const exam = {
+            examName: document.getElementById("examName").value,
+            grade: parseInt(document.getElementById("grade").value),
+            roomName: document.getElementById("roomName").value,
+            date: document.getElementById("examDate").value,
+            active: true
+        };
+
+        await fetch(BASE_URL, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(exam)
+        });
+
+        alert("✅ İmtahan əlavə olundu!");
+        getAllExams();
+    }
+
+    async function filterByGrade() {
+        const grade = document.getElementById("searchGrade").value;
+        if (!grade) return;
+        const res = await fetch(`${BASE_URL}/grade/${grade}`);
+        const exams = await res.json();
+        renderTable(exams);
+    }
+
+    async function filterByRoom() {
+        const room = document.getElementById("searchRoom").value;
+        if (!room) return;
+        const res = await fetch(`${BASE_URL}/room/${room}`);
+        const exams = await res.json();
+        renderTable(exams);
+    }
+
+    async function deactivateExam(id) {
+        await fetch(`${BASE_URL}/${id}/deactivate`, { method: "PUT" });
+        alert("⚠️ İmtahan deaktiv edildi!");
+        getAllExams();
+    }
+
+    async function deleteExam(id) {
+        if (confirm("Bu imtahanı silmək istədiyinizə əminsiniz?")) {
+            await fetch(`${BASE_URL}/${id}`, { method: "DELETE" });
+            getAllExams();
+        }
+    }
+
+    function renderTable(exams) {
+        const tbody = document.querySelector("#examTable tbody");
+        tbody.innerHTML = "";
+        exams.forEach(e => {
+            const row = `
+      <tr>
+        <td>${e.id}</td>
+        <td>${e.examName}</td>
+        <td>${e.grade}</td>
+        <td>${e.roomName}</td>
+        <td>${e.date ? new Date(e.date).toLocaleString('az-AZ') : ''}</td>
+        <td>${e.active ? "✅ Aktiv" : "❌ Deaktiv"}</td>
+        <td>
+          <button class="action-btn" onclick="deactivateExam(${e.id})">Deaktiv</button>
+          <button class="action-btn" onclick="deleteExam(${e.id})">Sil</button>
+        </td>
+      </tr>
+        `;
+            tbody.innerHTML += row;
+        });
+    }
+
+    getAllExams();
+</script>
+
+</body>
+</html>

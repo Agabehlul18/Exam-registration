@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <title>Otaq İdarə Sistemi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f8f9ff, #eef1ff);
+            min-height: 100vh;
+            padding: 40px;
+        }
+        .container { max-width: 1000px; background: #fff; border-radius: 18px; padding: 40px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+        h1 { text-align: center; font-weight: 600; color: #4b56d2; margin-bottom: 30px; }
+        .room-card { border: 2px solid #4b56d2; border-radius: 12px; padding: 20px; margin-bottom: 20px; transition: all 0.3s ease; background: #fdfdff; cursor: pointer; }
+        .room-card:hover { transform: translateY(-4px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+        .room-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .room-name { font-size: 1.3rem; font-weight: 600; color: #333; }
+        .room-stats { font-size: 0.9rem; color: #666; }
+        .progress { height: 12px; background: #e9ecef; border-radius: 6px; overflow: hidden; }
+        .progress-bar { background: linear-gradient(90deg, #6a5acd, #8a7ff1); transition: width 0.5s ease; }
+        .remaining { font-size: 0.9rem; font-weight: 600; color: #4b56d2; text-align: right; margin-top: 8px; }
+        .students-list { margin-top: 15px; padding: 10px 15px; background: #f5f5ff; border-radius: 8px; }
+        .student-item { padding: 5px 0; }
+        .form-section { border-top: 2px solid #ddd; margin-top: 40px; padding-top: 30px; }
+        .btn-custom { background: linear-gradient(90deg, #667eea, #764ba2); color: white; border: none; transition: all 0.3s ease; }
+        .btn-custom:hover { transform: scale(1.05); background: linear-gradient(90deg, #5b6ee0, #6f48a1); }
+        /* Ümumi üslublar */
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f6fa;
+            padding-top: 80px; /* header sabit olduğu üçün məzmun yuxarıya girməsin */
+        }
+
+        /* Header dizaynı */
+        header {
+            background: linear-gradient(90deg, #00b894, #00cec9);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        /* Başlıq */
+        header h1 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Naviqasiya */
+        nav {
+            display: flex;
+            gap: 25px;
+        }
+
+        /* Naviqasiya linkləri */
+        nav a {
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: 500;
+            transition: 0.3s ease;
+            padding: 8px 14px;
+            border-radius: 8px;
+        }
+
+        /* Hover effekti */
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Aktiv səhifə */
+        nav a.active {
+            background-color: rgba(255, 255, 255, 0.25);
+            font-weight: 600;
+        }
+
+        /* Mobil uyğunluq */
+        @media (max-width: 700px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 20px;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-top: 10px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+<header>
+    <h1>📘 İmtahanların İdarə Paneli</h1>
+    <nav>
+        <a href="index.html">🏠 Ana səhifə</a>
+        <a href="room.html">🏫 Otaqlar</a>
+        <a href="students.html">👨‍🎓 Tələbələr</a>
+    </nav>
+</header>
+
+<div class="container">
+    <h1>🏫 Otaqların idarə paneli</h1>
+    <div id="roomContainer"></div>
+
+    <div class="form-section">
+        <h4>➕ Yeni otaq əlavə et</h4>
+        <form id="addRoomForm" class="row g-3 mt-2">
+            <div class="col-md-4">
+                <label class="form-label">Otaq nömrəsi</label>
+                <input type="text" class="form-control" name="roomNo" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Tutum</label>
+                <input type="number" class="form-control" name="capacity" required>
+            </div>
+            <div class="col-md-4 align-self-end">
+                <button class="btn btn-custom w-100" type="submit">Əlavə et</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const API_BASE = 'http://localhost:8080/api';
+
+    // Otaqları yüklə
+    async function loadRooms() {
+        try {
+            const res = await fetch(`${API_BASE}/rooms`);
+            const rooms = await res.json();
+
+            const container = document.getElementById('roomContainer');
+            container.innerHTML = '';
+
+            rooms.forEach(room => {
+                const percent = Math.round((room.currentCount / room.capacity) * 100);
+                const remaining = room.capacity - room.currentCount;
+
+                const card = document.createElement('div');
+                card.className = 'room-card';
+                card.dataset.roomId = room.id;
+                card.innerHTML = `
+                <div class="room-header">
+                    <div class="room-name">${room.roomNo}</div>
+                    <div class="room-stats">Tutum: ${room.capacity} nəfər</div>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar" style="width: ${percent}%;"></div>
+                </div>
+                <div class="remaining">
+                    Doluluq: ${room.currentCount}/${room.capacity} | Qalan yer: ${remaining}
+                </div>
+                <div class="students-list" style="display:none;"></div>
+            `;
+
+                card.addEventListener('click', async () => {
+                    const listDiv = card.querySelector('.students-list');
+                    if (listDiv.style.display === 'block') {
+                        listDiv.style.display = 'none';
+                    } else {
+                        try {
+                            const roomId = card.dataset.roomId;
+                            const res = await fetch(`${API_BASE}/students/byRoom/${roomId}`);
+                            const students = await res.json();
+
+                            listDiv.innerHTML = students.length
+                                ? students.map(s => `<div class="student-item">👤 ${s.name} ${s.surname} | Sinif: ${s.grade}</div>`).join('')
+                                : '<div class="student-item text-muted">Bu otaqda tələbə yoxdur</div>';
+
+                            listDiv.style.display = 'block';
+                        } catch (err) {
+                            listDiv.innerHTML = '<div class="student-item text-danger">Tələbələr yüklənə bilmir!</div>';
+                            listDiv.style.display = 'block';
+                        }
+                    }
+                });
+
+                container.appendChild(card);
+            });
+        } catch (err) {
+            console.error("Otaqlar yüklənərkən xəta baş verdi:", err);
+        }
+    }
+
+    // Yeni otaq əlavə et
+    document.getElementById('addRoomForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(e.target).entries());
+        data.currentCount = 0;
+
+        try {
+            const res = await fetch(`${API_BASE}/rooms`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                alert("✅ Otaq əlavə olundu!");
+                e.target.reset();
+                loadRooms();
+            } else {
+                alert("❌ Xəta baş verdi!");
+            }
+        } catch (err) {
+            alert("❌ Server ilə əlaqə qurulmadı!");
+            console.error(err);
+        }
+    });
+
+    // İlk yükləmə
+    loadRooms();
+    setInterval(loadRooms, 10000);
+</script>
+
+</body>
+</html>
