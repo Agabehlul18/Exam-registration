@@ -4,6 +4,7 @@ import com.math.examregistration.dto.StudentDTO;
 import com.math.examregistration.entity.Exam;
 import com.math.examregistration.entity.Room;
 import com.math.examregistration.entity.Student;
+import com.math.examregistration.exception.StudentAlreadyRegisteredException;
 import com.math.examregistration.repository.ExamRepository;
 import com.math.examregistration.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,7 @@ public class StudentService {
                 dto.getGrade(),
                 exam
         ).ifPresent(s -> {
-            throw new RuntimeException("Bu şagird artıq bu imtahan üçün qeydiyyatdan keçib!");
+            throw new StudentAlreadyRegisteredException("Bu şagird artıq bu imtahan üçün qeydiyyatdan keçib!");
         });
 
         // 3️⃣ Boş otaq tap və oturacaq nömrəsini təyin et
