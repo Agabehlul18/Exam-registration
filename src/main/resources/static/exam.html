@@ -76,7 +76,10 @@
 </table>
 
 <script>
-    const BASE_URL = "http://localhost:8080/api/exams";
+    const BASE_URL = window.location.hostname === "localhost"
+        ? "http://localhost:8080/api/exams"
+        : "https://exam-registration.onrender.com/api/exams";
+
 
     async function getAllExams() {
         const res = await fetch(BASE_URL);
