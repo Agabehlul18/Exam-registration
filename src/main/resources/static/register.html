@@ -4,19 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Şagird Qeydiyyatı</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #42cea2, #2b7a46);
             min-height: 100vh;
+            padding-top: 80px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 40px 20px;
             overflow-x: hidden;
         }
+
+        header {
+            background: linear-gradient(90deg, #00b894, #00cec9);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        header h1 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        nav { display: flex; gap: 25px; }
+        nav a {
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: 500;
+            transition: 0.3s ease;
+            padding: 8px 14px;
+            border-radius: 8px;
+        }
+        nav a:hover { background-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
+        nav a.active { background-color: rgba(255,255,255,0.25); font-weight: 600; }
+        @media (max-width: 700px){
+            header { flex-direction: column; align-items: flex-start; padding: 20px; }
+            nav { flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        }
+
         .form-container, .card-container {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -26,14 +64,9 @@
             width: 100%;
             max-width: 480px;
             margin-bottom: 30px;
-            position: relative;
-            z-index: 1;
             animation: slideUp 0.6s ease-out;
         }
-        @keyframes slideUp {
-            from {opacity:0; transform:translateY(30px);}
-            to {opacity:1; transform:translateY(0);}
-        }
+        @keyframes slideUp { from {opacity:0; transform:translateY(30px);} to {opacity:1; transform:translateY(0);} }
         h2 {
             text-align:center;
             font-size:28px;
@@ -43,6 +76,7 @@
             -webkit-background-clip:text;
             -webkit-text-fill-color:transparent;
         }
+
         input, select {
             width:100%;
             padding:14px 16px;
@@ -59,6 +93,7 @@
             box-shadow:0 0 0 4px rgba(39,174,96,0.1);
             transform:translateY(-2px);
         }
+
         button {
             width:100%;
             padding:14px;
@@ -73,21 +108,12 @@
             transition: all 0.3s ease;
             box-shadow:0 4px 15px rgba(46,204,113,0.4);
         }
-        button:hover {
-            transform:translateY(-2px);
-            box-shadow:0 6px 20px rgba(39,174,96,0.6);
-        }
-        #result {
-            margin-top:20px;
-            padding:14px;
-            border-radius:12px;
-            font-weight:500;
-            text-align:center;
-        }
+        button:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(39,174,96,0.6); }
+
+        #result { margin-top:20px; padding:14px; border-radius:12px; font-weight:500; text-align:center; }
         #result.success { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
         #result.error { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; }
 
-        /* Kart Dizaynı */
         .card {
             border-radius:16px;
             padding:24px;
@@ -109,11 +135,7 @@
             -webkit-text-fill-color:transparent;
             margin:0;
         }
-        .card-header p {
-            font-size:12px;
-            color:#555;
-            margin:0;
-        }
+        .card-header p { font-size:12px; color:#555; margin:0; }
         .card p {
             margin:8px 0;
             font-size:15px;
@@ -124,97 +146,22 @@
         .card p strong { color:#1a202c; }
         .btn-group { display:flex; gap:12px; margin-top:20px; }
         .btn-group button:nth-child(2) { background:linear-gradient(135deg,#1abc9c,#16a085); }
-        /* Ümumi üslublar */
-        body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background-color: #f5f6fa;
-            padding-top: 80px; /* header sabit olduğu üçün məzmun yuxarıya girməsin */
-        }
 
-        /* Header dizaynı */
-        header {
-            background: linear-gradient(90deg, #00b894, #00cec9);
-            color: #fff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 40px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-        }
-
-        /* Başlıq */
-        header h1 {
-            font-size: 1.6rem;
-            font-weight: 600;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Naviqasiya */
-        nav {
-            display: flex;
-            gap: 25px;
-        }
-
-        /* Naviqasiya linkləri */
-        nav a {
-            text-decoration: none;
-            color: #ffffff;
-            font-weight: 500;
-            transition: 0.3s ease;
-            padding: 8px 14px;
-            border-radius: 8px;
-        }
-
-        /* Hover effekti */
-        nav a:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
-        /* Aktiv səhifə */
-        nav a.active {
-            background-color: rgba(255, 255, 255, 0.25);
-            font-weight: 600;
-        }
-
-        /* Mobil uyğunluq */
-        @media (max-width: 700px) {
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 20px;
-            }
-
-            nav {
-                flex-wrap: wrap;
-                gap: 10px;
-                margin-top: 10px;
-            }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     </style>
 </head>
-
 <body>
+
 <header>
     <h1>📘 İmtahanların İdarə Paneli</h1>
     <nav>
         <a href="index.html">🏠 Ana səhifə</a>
         <a href="room.html">🏫 Otaqlar</a>
-        <a href="students.html">👨‍🎓 Tələbələr</a>
+        <a href="students.html" class="active">👨‍🎓 Tələbələr</a>
     </nav>
 </header>
 
-<!-- Qeydiyyat Formu -->
 <div class="form-container">
     <h2>Şagird Qeydiyyatı</h2>
     <form id="studentForm">
@@ -238,7 +185,6 @@
     <div id="result"></div>
 </div>
 
-<!-- İmtahan Kartı -->
 <div class="card-container" id="cardContainer" style="display:none;">
     <div class="card" id="printCard">
         <div class="card-header">
@@ -251,7 +197,7 @@
         <p><strong>Ad Soyad Ata adı:</strong> <span id="cardName"></span></p>
         <p><strong>İş nömrəsi:</strong> <span id="cardCode"></span></p>
         <p><strong>Sinif:</strong> <span id="cardGrade"></span></p>
-        <p><strong>Otaq / Yer:</strong> <span id="cardRoom"></span> / <span id="cardSeat"></span></p>
+        <p><strong>Otaq / Yer:</strong> <span id="cardRoom"></span> | <span id="cardSeat"></span></p>
         <p><strong>BSP tələbəsidir:</strong> <span id="cardBsp"></span></p>
         <p><strong>Ünvan:</strong> Bakıxanov qəs., Villa Plaza</p>
         <p><strong>Saat:</strong> 10:00</p>
@@ -264,86 +210,15 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
-    // Form Submit
-    document.getElementById('studentForm').addEventListener('submit', async (e)=>{
-        e.preventDefault();
-        const formData = Object.fromEntries(new FormData(e.target).entries());
-        formData.bspStudent = document.getElementById('bspStudent').checked;
-        formData.examId = parseInt(formData.examId);
-
-        const resultDiv = document.getElementById('result');
-        const cardContainer = document.getElementById('cardContainer');
-
-        try{
-            const res = await fetch('/api/students/add', {
-                method:'POST',
-                headers:{'Content-Type':'application/json'},
-                body:JSON.stringify(formData)
-            });
-            if(!res.ok) throw new Error(await res.text());
-            const student = await res.json();
-
-            // Dinamik Kart Doldur
-            document.getElementById('cardName').innerText = `${student.name} ${student.surname} ${student.fatherName}`;
-            document.getElementById('cardGrade').innerText = student.grade;
-            document.getElementById('cardCode').innerText = student.studentCode;
-            document.getElementById('cardRoom').innerText = student.room.roomNo;
-            document.getElementById('cardSeat').innerText = student.seatNo;
-            document.getElementById('cardBsp').innerHTML = student.bspStudent
-                ? "<span style='color:green;font-weight:bold;'>Bəli ✅</span>"
-                : "<span style='color:red;font-weight:bold;'>Xeyr ❌</span>";
-
-            // Dinamik tarix və saat
-            const now = new Date();
-            document.getElementById('cardDate').innerText = now.toLocaleDateString();
-            document.getElementById('cardTime').innerText = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-
-            cardContainer.style.display = 'block';
-            resultDiv.className = "success";
-            resultDiv.innerText = "Şagird uğurla qeydiyyatdan keçdi!";
-        } catch(err){
-            resultDiv.className = "error";
-            resultDiv.innerText = err.message;
-            cardContainer.style.display = 'none';
-        }
-    });
-
-    // Çap funksiyası
-    function printCard() {
-        const card = document.getElementById('printCard').outerHTML;
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`<html><head><title>Giriş Kartı</title></head><body>${card}</body></html>`);
-        printWindow.document.close();
-        printWindow.focus();
-        setTimeout(() => printWindow.print(), 250);
-    }
-
-    // PDF Yükləmə funksiyası
-    function downloadPDF(){
-        const element=document.getElementById('printCard');
-        html2pdf().set({
-            margin:0,
-            filename:`${document.getElementById('cardName').innerText}_Giris_Karti.pdf`,
-            image:{type:'jpeg',quality:0.98},
-            html2canvas:{scale:3},
-            jsPDF:{unit:'mm',format:[105,148],orientation:'portrait'}
-        }).from(element).save();
-    }
-</script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script>
     const form = document.getElementById('studentForm');
-    const submitBtn = form.querySelector('button[type="submit"]'); // 🟢 düyməni seçirik
+    const submitBtn = form.querySelector('button[type="submit"]');
 
     form.addEventListener('submit', async (e)=>{
         e.preventDefault();
-
-        // 🟢 1. Düyməni deaktiv edib "Yüklənir..." göstəricisi əlavə edirik
         submitBtn.disabled = true;
         const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;">
-            <div class="loader" style="border:3px solid #fff;border-top:3px solid transparent;border-radius:50%;width:16px;height:16px;animation:spin 1s linear infinite;"></div>
+            <div style="border:3px solid #fff;border-top:3px solid transparent;border-radius:50%;width:16px;height:16px;animation:spin 1s linear infinite;"></div>
             Yüklənir...
         </span>`;
 
@@ -363,7 +238,7 @@
             if(!res.ok) throw new Error(await res.text());
             const student = await res.json();
 
-            // Kart məlumatlarını doldur
+            // Kart məlumatları
             document.getElementById('cardName').innerText = `${student.name} ${student.surname} ${student.fatherName}`;
             document.getElementById('cardGrade').innerText = student.grade;
             document.getElementById('cardCode').innerText = student.studentCode;
@@ -385,42 +260,152 @@
             resultDiv.innerText = err.message;
             cardContainer.style.display = 'none';
         } finally {
-            // 🟢 2. Əməliyyat bitəndə düyməni bərpa edirik
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
         }
     });
 
-    // 🟢 Loader animasiyası
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }`;
-    document.head.appendChild(style);
-
-    // Çap funksiyası
     function printCard() {
         const card = document.getElementById('printCard').outerHTML;
         const printWindow = window.open('', '_blank');
-        printWindow.document.write(`<html><head><title>Giriş Kartı</title></head><body>${card}</body></html>`);
+        printWindow.document.write(`
+    <!DOCTYPE html>
+    <html lang="az">
+    <head>
+      <meta charset="UTF-8">
+      <title>Riyaziyyat Buraxılış Sınaq 2</title>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+      <style>
+        @page { margin: 0; size: A4; }
+        * { box-sizing: border-box; }
+        body {
+          margin: 0;
+          padding: 40px;
+          display: flex;
+          justify-content: center;
+          font-family: 'Inter', sans-serif;
+          background: #f6f8fa;
+        }
+        .ticket {
+          width: 90%;
+          background: #fff;
+          border: 8px solid #27ae60;
+          border-radius: 20px;
+          display: flex;
+          flex-direction: row;
+          gap: 30px;
+          padding: 30px;
+          box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+        }
+        .left {
+          width: 48%;
+          display: flex;
+          flex-direction: column;
+        }
+        .left-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 15px;
+        }
+        .left-header h1 {
+          margin: 0;
+          font-size: 20px;
+          font-weight: 700;
+          color: #27ae60;
+        }
+        .info p {
+          margin: 6px 0;
+          font-size: 16px;
+          line-height: 1.7;
+        }
+        .right {
+          width: 48%;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+        .social h3 {
+          color: #ff7b00;
+          margin-bottom: 12px;
+          font-size: 18px;
+        }
+        .social p {
+          margin: 4px 0;
+          font-size: 15px;
+        }
+        .footer {
+          text-align: center;
+          font-weight: 600;
+          color: #27ae60;
+          border-top: 1px solid #e5e7eb;
+          padding-top: 12px;
+          font-size: 14px;
+        }
+        .qr {
+          margin-bottom: 30px;
+          text-align: center;
+        }
+        .qr img {
+          width: 120px;
+          height: 120px;
+          border-radius: 8px;
+          border: 2px solid #27ae60;
+        }
+        @media print {
+          body { background: white; margin: 0; }
+          .ticket { box-shadow: none; border: 1px solid #ccc; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="ticket">
+        <div class="left">
+          <div class="left-header">
+            <div>
+              <h1>Riyaziyyat Buraxılış Sınaq 2</h1>
+
+            </div>
+          </div>
+          <div class="info">
+            <p><strong>Ad Soyad Ata adı:</strong> ${document.getElementById('cardName').textContent}</p>
+            <p><strong>İş nömrəsi:</strong> ${document.getElementById('cardCode').textContent}</p>
+            <p><strong>Sinif:</strong> ${document.getElementById('cardGrade').textContent}</p>
+            <p><strong>Otaq:</strong> ${document.getElementById('cardRoom').textContent} </p>
+            <p><strong>Yer:</strong> ${document.getElementById('cardSeat').textContent}</p>
+            <p><strong>BSP LearnUp tələbəsidir:</strong> ${document.getElementById('cardBsp').textContent}</p>
+            <p><strong>Tarix:</strong> 02.11.2025</p>
+            <p><strong>Saat:</strong> 10:00</p>
+            <p><strong>Ünvan:</strong> Bakıxanov qəs., Villa Plaza</p>
+            <p>Biletin satış tarixi: ${document.getElementById('cardDate').textContent} | ${document.getElementById('cardTime').textContent}</p>
+          </div>
+
+        </div>
+
+        <div class="right">
+          <div class="social">
+            <h3>📱 Bizi izləyin:</h3>
+            <p>🎥 YouTube: <b>Riyaziyyat hər kəs üçün</b></p>
+            <p>📸 İnstagram: <b>math.bsp.az</b> | <b>bsplearnup</b></p>
+            <p>💬 Telegram: <b>riyaziyyatherkesucun</b></p>
+            <p>🌐 Sayt: <b>mathbsp.az</b></p>
+            <p>📞 Əlaqə: <b>070 621 12 29</b></p>
+
+          </div>
+          <div class="qr">
+            <img src="mathbsp-az-qr-code.png" alt="QR Kod">
+          </div>
+          <p class="footer">🧮 BSP LearnUp ilə fərq yarat!<br>“Əziyyət çək, zirvəyə qalx!”</p>
+        </div>
+      </div>
+    </body>
+    </html>
+    `);
         printWindow.document.close();
-        printWindow.focus();
-        setTimeout(() => printWindow.print(), 250);
+        setTimeout(() => printWindow.print(), 300);
     }
 
-    // PDF Yükləmə funksiyası
-    function downloadPDF(){
-        const element=document.getElementById('printCard');
-        html2pdf().set({
-            margin:0,
-            filename:`${document.getElementById('cardName').innerText}_Giris_Karti.pdf`,
-            image:{type:'jpeg',quality:0.98},
-            html2canvas:{scale:3},
-            jsPDF:{unit:'mm',format:[105,148],orientation:'portrait'}
-        }).from(element).save();
-    }
+
 </script>
 
 </body>
