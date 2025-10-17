@@ -29,7 +29,7 @@ WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
 
 # 9. Portu təyin edirik
-EXPOSE 8081
+EXPOSE 8080
 
 # 10. Start command
 ENTRYPOINT ["java","-jar","app.jar"]
