@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tələbə Statistikası</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+<div class="container">
+  <h1>📊 Tələbə Statistikası</h1>
+
+  <div class="stats">
+    <div class="card">Ümumi tələbə: <span id="total">0</span></div>
+    <div class="card">9-cu sinif: <span id="grade9">0</span></div>
+    <div class="card">10-cu sinif: <span id="grade10">0</span></div>
+    <div class="card">11-ci sinif: <span id="grade11">0</span></div>
+  </div>
+
+  <h2>📋 Qeydiyyatdan keçən tələbələr</h2>
+  <table>
+    <thead>
+    <tr><th>ID</th><th>Ad Soyad</th><th>Sinif</th></tr>
+    </thead>
+    <tbody id="studentTableBody"></tbody>
+  </table>
+</div>
+
+<script>
+  const baseUrl = "http://localhost:8080/api/admin";
+
+  async function loadStats() {
+    const res = await fetch(`${baseUrl}/students/statistics`);
+    const data = await res.json();
+    document.getElementById('total').textContent = data.total;
+    document.getElementById('grade9').textContent = data.grade9;
+    document.getElementById('grade10').textContent = data.grade10;
+    document.getElementById('grade11').textContent = data.grade11;
+  }
+
+  async function loadStudents() {
+    const res = await fetch(`${baseUrl}/students`);
+    const students = await res.json();
+    const tbody = document.getElementById('studentTableBody');
+    tbody.innerHTML = "";
+    students.forEach(s => {
+      tbody.innerHTML += `
+          <tr>
+            <td>${s.id}</td>
+            <td>${s.name} ${s.surname}</td>
+            <td>${s.grade}</td>
+          </tr>`;
+    });
+  }
+
+  loadStats();
+  loadStudents();
+</script>
+<style>body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f5f7fb;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 900px;
+  margin: 30px auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 20px;
+}
+
+h1 {
+  color: #007bff;
+  text-align: center;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: #e9f3ff;
+  padding: 15px 25px;
+  border-radius: 12px;
+  font-size: 18px;
+  color: #333;
+  margin: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #007bff;
+  color: white;
+}
+</style>
+</body>
+</html>

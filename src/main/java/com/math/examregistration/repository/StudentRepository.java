@@ -16,5 +16,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     boolean existsByStudentCode(String studentCode);
     // 🔹 Otaq üzrə tələbələri gətirən metod
     List<Student> findAllByRoomId(Long roomId);
+    long countByGrade(int grade);
 
 }

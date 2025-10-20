@@ -98,4 +98,13 @@ public class StudentService {
         log.info("Otaq üzrə tələbələr gətirilir: otaq ID {}", roomId);
         return studentRepository.findAllByRoomId(roomId);
     }
+
+
+    public long countAllStudents() {
+        return studentRepository.count();
+    }
+
+    public long countByGrade(int grade) {
+        return studentRepository.countByGrade(grade);
+    }
 }

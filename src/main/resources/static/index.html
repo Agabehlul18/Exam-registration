@@ -21,6 +21,28 @@
             align-items: center;
             padding: 20px;
             text-align: center;
+            position: relative;
+        }
+
+        /* ✅ Admin düyməsi üçün stil */
+        .admin-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #0ea5e9;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+        }
+
+        .admin-btn:hover {
+            background-color: #0284c7;
         }
 
         .container {
@@ -59,6 +81,7 @@
             color: white;
             cursor: pointer;
             transition: background-color 0.3s;
+            text-decoration: none;
         }
 
         .btn-register { background-color: #f97316; }
@@ -79,6 +102,9 @@
 
 </head>
 <body>
+<!-- ✅ Sağ yuxarı Admin Giriş düyməsi -->
+<a href="/admin.html" class="admin-btn">🔑 Admin Giriş</a>
+
 <div class="container">
     <div class="header-section">
         <h1>İmtahan Qeydiyyat Sistemi</h1>
