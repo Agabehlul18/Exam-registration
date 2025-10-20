@@ -27,7 +27,9 @@
 </div>
 
 <script>
-  const baseUrl = "http://localhost:8080/api/admin";
+  const baseUrl = = window.location.hostname === "localhost"
+          ? "http://localhost:8080/api/admin"
+          : "https://exam-registration.onrender.com/api/admin";
 
   async function loadStats() {
     const res = await fetch(`${baseUrl}/students/statistics`);
