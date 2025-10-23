@@ -10,5 +10,6 @@ public class StudentDTO {
     private int grade;
     private String phone;
     private boolean bspStudent;
+    private double paymentAmount;
     private Long examId; // imtahan ID-si (select-dən gələcək)
 }

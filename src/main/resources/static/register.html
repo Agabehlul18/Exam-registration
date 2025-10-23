@@ -168,8 +168,25 @@
         <input type="text" name="name" placeholder="Ad" required><br><br>
         <input type="text" name="surname" placeholder="Soyad" required><br><br>
         <input type="text" name="fatherName" placeholder="Ata adı" required><br><br>
-        <input type="number" name="grade" placeholder="Sinif" required><br><br>
+        <label for="studentType" style="font-size:15px;">Sinif:</label><br>
+        <select name="grade" required>
+            <option value="">Sinif seçin</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+        </select><br><br>
         <input type="text" name="phone" placeholder="Telefon nömrəsi" required><br><br>
+        <label for="studentType" style="font-size:15px;">Qrup seçin:</label><br>
+        <select id="studentType" name="studentType" required onchange="updatePaymentAmount()">
+            <option value="">Seçin...</option>
+            <option value="S">S qrupu</option>
+            <option value="BSP">BSP LearnUp tələbəsi</option>
+            <option value="Other">Kənar tələbə</option>
+        </select><br><br>
+        <label for="studentType" style="font-size:15px;">Ödəniş:</label><br>
+
+        <input type="number" id="paymentAmount" name="paymentAmount" step="0.01" placeholder="Ödəniş məbləği (AZN)" readonly required><br><br>
+
 
         <select name="examId" required>
             <option value="">İmtahan seçin</option>
@@ -207,6 +224,26 @@
         <button onclick="downloadPDF()">PDF Yüklə</button>
     </div>
 </div>
+<script>
+    function updatePaymentAmount() {
+        const type = document.getElementById("studentType").value;
+        const paymentInput = document.getElementById("paymentAmount");
+
+        switch(type) {
+            case "S":
+                paymentInput.value = 0;
+                break;
+            case "BSP":
+                paymentInput.value = 5;
+                break;
+            case "Other":
+                paymentInput.value = 7;
+                break;
+            default:
+                paymentInput.value = "";
+        }
+    }
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>

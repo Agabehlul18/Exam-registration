@@ -30,12 +30,21 @@ public class AdminController {
         long grade9 = studentService.countByGrade(9);
         long grade10 = studentService.countByGrade(10);
         long grade11 = studentService.countByGrade(11);
+        Double totalPayment = studentService.getTotalPayment();
 
         Map<String, Object> stats = new HashMap<>();
         stats.put("total", total);
         stats.put("grade9", grade9);
         stats.put("grade10", grade10);
         stats.put("grade11", grade11);
+        stats.put("totalPayment", totalPayment != null ? totalPayment : 0.0);
+
         return stats;
     }
+
+    @GetMapping("/students/payment-statistics")
+    public Map<String, Object> getPaymentStats() {
+        return studentService.getPaymentStatistics();
+    }
+
 }

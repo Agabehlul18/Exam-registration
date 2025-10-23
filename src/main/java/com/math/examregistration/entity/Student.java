@@ -32,6 +32,10 @@ public class Student {
     @JoinColumn(name = "room_id")
     private Room room;
 
+    @Column(name = "payment_amount", nullable = true)
+    private Double paymentAmount;
+
+
     // ✅ BSP LearnUp tələbəsisən? (true / false)
     @Column(name = "is_bsp_student")
     private boolean bspStudent;

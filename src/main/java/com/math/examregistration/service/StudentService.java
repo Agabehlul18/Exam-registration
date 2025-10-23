@@ -11,7 +11,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 @Slf4j
@@ -34,7 +36,7 @@ public class StudentService {
                     return new RuntimeException("İmtahan tapılmadı!");
                 });
 
-        // 2️⃣ Eyni şagird artıq yazılıbsa
+        // 2️⃣ Təkrar qeydiyyat yoxlanışı
         studentRepository.findByNameAndSurnameAndFatherNameAndGradeAndExam(
                 dto.getName(),
                 dto.getSurname(),
@@ -55,7 +57,7 @@ public class StudentService {
         String code = generateUniqueStudentCode();
         log.debug("Tələbə üçün unikal kod yaradıldı: {}", code);
 
-        // 5️⃣ Yeni tələbəni yarat
+        // 5️⃣ Yeni tələbə obyektinin yaradılması
         Student student = new Student();
         student.setName(dto.getName());
         student.setSurname(dto.getSurname());
@@ -68,15 +70,19 @@ public class StudentService {
         student.setSeatNo(seatNo);
         student.setStudentCode(code);
 
+        // 🔹 Uşağın verdiyi məbləği birbaşa yazırıq
+        student.setPaymentAmount(dto.getPaymentAmount());
+
         // 6️⃣ Yadda saxla
         Student saved = studentRepository.save(student);
         roomService.incrementRoomCount(room);
 
-        log.info("Tələbə uğurla qeydiyyatdan keçdi: {} {} (kod: {})", saved.getName(), saved.getSurname(), saved.getStudentCode());
+        log.info("Tələbə uğurla qeydiyyatdan keçdi: {} {} (ödədi: {} AZN)",
+                saved.getName(), saved.getSurname(), saved.getPaymentAmount());
         return saved;
     }
 
-    // ✅ Random və unikal 6 rəqəmli iş nömrəsi
+    // ✅ Random və unikal 6 rəqəmli kod
     private String generateUniqueStudentCode() {
         Random random = new Random();
         String code;
@@ -87,18 +93,15 @@ public class StudentService {
         return code;
     }
 
-    // ✅ Bütün tələbələri gətir
     public List<Student> getAllStudents() {
         log.info("Bütün tələbələr gətirilir...");
-        return studentRepository.findAll();
+        return studentRepository.findAllByOrderByIdAsc();
     }
 
-    // ✅ Otaq üzrə tələbələri gətir
     public List<Student> getStudentsByRoom(Long roomId) {
         log.info("Otaq üzrə tələbələr gətirilir: otaq ID {}", roomId);
         return studentRepository.findAllByRoomId(roomId);
     }
-
 
     public long countAllStudents() {
         return studentRepository.count();
@@ -107,4 +110,19 @@ public class StudentService {
     public long countByGrade(int grade) {
         return studentRepository.countByGrade(grade);
     }
+
+    public Double getTotalPayment() {
+        return studentRepository.sumPaymentAmount();
+    }
+
+    public Map<String, Object> getPaymentStatistics() {
+        Object[] stats = (Object[]) studentRepository.getPaymentStatistics();
+        Map<String, Object> result = new HashMap<>();
+        result.put("sGroupCount", stats[0]);
+        result.put("bspCount", stats[1]);
+        result.put("externalCount", stats[2]);
+        result.put("totalPayment", stats[3]);
+        return result;
+    }
+
 }
