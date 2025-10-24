@@ -6,29 +6,195 @@
     <title>İmtahanların İdarə Paneli</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* --- eyni stil kodu --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #45ff79 0%, #008c27 50%, #ff8e3f 100%); min-height: 100vh; padding: 40px 20px; color: #fff; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.25); }
-        nav a { text-decoration: none; color: white; font-weight: 600; background: rgba(255,255,255,0.15); padding: 10px 18px; border-radius: 12px; margin-left: 10px; transition: 0.3s; }
-        nav a:hover { background: rgba(255,255,255,0.3); transform: translateY(-3px); }
-        .exam-form { max-width: 700px; margin: 0 auto 40px; background: rgba(255, 255, 255, 0.15); padding: 25px; border-radius: 20px; backdrop-filter: blur(10px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
-        .exam-form h2 { text-align: center; margin-bottom: 15px; }
-        .exam-form input { width: 100%; padding: 12px; margin-bottom: 15px; border: none; border-radius: 10px; font-size: 1rem; }
-        .exam-form button { width: 100%; background: linear-gradient(135deg, #f97316, #ff9a64); border: none; border-radius: 10px; padding: 14px; color: #fff; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
-        .exam-form button:hover { background: linear-gradient(135deg, #ea580c, #ffa06f); transform: translateY(-3px); }
-        table { width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); border-radius: 15px; overflow: hidden; }
-        th, td { padding: 12px 15px; text-align: center; }
-        th { background: rgba(255,255,255,0.25); color: #fff; }
-        tr:nth-child(even) { background: rgba(255,255,255,0.08); }
-        tr:hover { background: rgba(255,255,255,0.15); }
-        .action-btn { background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 8px; padding: 6px 10px; cursor: pointer; transition: 0.3s; }
-        .action-btn:hover { background: rgba(255,255,255,0.35); }
-        .search-container { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
-        .search-container input { padding: 10px; border-radius: 10px; border: none; width: 200px; font-size: 1rem; }
-        .search-container button { background: #45ff79; color: white; border: none; border-radius: 10px; padding: 10px 20px; cursor: pointer; font-weight: 600; transition: 0.3s; }
-        .search-container button:hover { background: #77ff9c; }
+        /* --- MODERN & CANLI STİL --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #3b82f6 0%, #22c55e 45%, #ff8936 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #fff;
+            transition: background 0.5s ease;
+        }
+
+        /* HEADER */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.25);
+            letter-spacing: 1px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 10px 18px;
+            border-radius: 12px;
+            margin-left: 10px;
+            transition: 0.3s ease;
+            backdrop-filter: blur(6px);
+        }
+
+        nav a:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+
+        /* FORM */
+        .exam-form {
+            max-width: 700px;
+            margin: 0 auto 40px;
+            background: rgba(255, 255, 255, 0.12);
+            padding: 25px;
+            border-radius: 20px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+            transition: 0.3s ease;
+        }
+
+        .exam-form:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .exam-form h2 {
+            text-align: center;
+            margin-bottom: 18px;
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .exam-form input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #333;
+            outline: none;
+        }
+
+        .exam-form button {
+            width: 100%;
+            background: linear-gradient(135deg, #f97316, #fb923c);
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .exam-form button:hover {
+            background: linear-gradient(135deg, #ea580c, #facc15);
+            transform: translateY(-3px);
+        }
+
+        /* TABLE */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(8px);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+
+        td {
+            color: #f1f5f9;
+            font-weight: 500;
+        }
+
+        tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        /* BUTTONLAR (əməliyyatlar) */
+        .action-btn {
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        /* AXTARIŞ SAHƏSİ */
+        .search-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .search-container input {
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            width: 220px;
+            font-size: 1rem;
+            color: #333;
+            outline: none;
+        }
+
+        .search-container button {
+            background: linear-gradient(135deg, #22c55e, #4ade80);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 22px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: 0.3s ease;
+        }
+
+        .search-container button:hover {
+            background: linear-gradient(135deg, #16a34a, #86efac);
+            transform: translateY(-2px);
+        }
+
 
     </style>
 </head>
