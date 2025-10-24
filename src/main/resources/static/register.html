@@ -194,7 +194,11 @@
         </select><br><br>
 
         <div style="display:flex;align-items:center;gap:10px;">
-            <input type="checkbox" id="bspStudent" name="bspStudent" style="width:20px;height:20px;">
+            <input
+                    type="checkbox"
+                    id="bspStudent"
+                    name="bspStudent"
+                    style="width:20px;height:20px;pointer-events:none;opacity:0.8;cursor:not-allowed;">
             <label for="bspStudent" style="font-size:15px;">BSP LearnUp tələbəsiyəm</label>
         </div>
         <button type="submit">Qeyd et</button>
@@ -228,19 +232,25 @@
     function updatePaymentAmount() {
         const type = document.getElementById("studentType").value;
         const paymentInput = document.getElementById("paymentAmount");
+        const bspCheckbox = document.getElementById("bspStudent");
 
+        // Avtomatik doldurma və BSP statusunun idarəsi
         switch(type) {
             case "S":
                 paymentInput.value = 0;
+                bspCheckbox.checked = true;
                 break;
             case "BSP":
                 paymentInput.value = 5;
+                bspCheckbox.checked = true;
                 break;
             case "Other":
                 paymentInput.value = 7;
+                bspCheckbox.checked = false;
                 break;
             default:
                 paymentInput.value = "";
+                bspCheckbox.checked = false;
         }
     }
 </script>
@@ -444,6 +454,7 @@
 
 
 </script>
+
 
 </body>
 </html>
