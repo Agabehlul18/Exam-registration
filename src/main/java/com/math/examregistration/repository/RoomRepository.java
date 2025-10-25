@@ -17,4 +17,10 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
         List<Room> rooms = findAvailableRooms(Pageable.ofSize(1));
         return rooms.isEmpty() ? Optional.empty() : Optional.of(rooms.get(0));
     }
+    @Query("SELECT COALESCE(SUM(r.capacity), 0) FROM Room r")
+    int getTotalCapacity();
+
+    @Query("SELECT COALESCE(SUM(r.currentCount), 0) FROM Room r")
+    int getTotalCurrentCount();
+
 }

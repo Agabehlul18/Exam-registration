@@ -100,4 +100,16 @@ public class RoomService {
         log.info("Otaq #{} üçün qalan yerlər: {}", room.getRoomNo(), remaining);
         return remaining;
     }
+
+    public int getTotalCapacity() {
+        int total = roomRepository.getTotalCapacity();
+        log.info("Bütün otaqların ümumi tutumu: {}", total);
+        return total;
+    }
+    public int getTotalCurrentCount() {
+        int total = roomRepository.getTotalCurrentCount();
+        log.info("Bütün otaqlarda hal-hazırda olan tələbələrin ümumi sayı: {}", total);
+        return total;
+    }
+
 }
