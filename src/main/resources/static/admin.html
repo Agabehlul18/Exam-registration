@@ -26,7 +26,7 @@
 
       /* Mətn rəngləri */
       --text-primary: #1f2937;  /* tünd mavi-gri */
-      --text-secondary: #1bff61; /* yumşaq tünd gri */
+      --text-secondary: #ff7a35; /* yumşaq tünd gri */
 
       /* Border və vəziyyət rəngləri */
       --border: #9ca3af;        /* açıq gri */
@@ -251,7 +251,7 @@
     }
 
     .stat-card {
-      background: rgba(0, 255, 103, 0.9);
+      background: #00c35a;
       backdrop-filter: blur(10px);
       border: 1px solid rgba(156, 163, 175, 0.2);
       border-radius: 16px;
@@ -528,7 +528,7 @@
     <div class="stats-grid">
       <div class="stat-card purple-card">
         <div class="stat-icon">👥</div>
-        <div class="stat-label">Ümumi Tələbə</div>
+        <div class="stat-label"><b>Ümumi Tələbə</b></div>
         <div class="stat-value" id="total">-</div>
         <div class="stat-change">Qeydiyyatdan keçmiş</div>
       </div>
@@ -556,7 +556,7 @@
 
       <div class="stat-card purple-card">
         <div class="stat-icon">💰</div>
-        <div class="stat-label">Ümumi Ödəniş</div>
+        <div class="stat-label"><b>Ümumi Ödəniş</b></div>
         <div class="stat-value" id="totalPayment">-</div>
         <div class="stat-change">AZN</div>
       </div>
@@ -583,10 +583,11 @@
         <div class="stat-change">Tələbə sayı</div>
       </div>
     </div>
+
     <div class="room-progress-card">
-      <h3>Otaqların Doluluq Faizi</h3>
+      <h3>Qeydiyyat faizi</h3>
       <div class="progress-bar">
-        <div class="progress-fill" id="roomFill"></div>
+        <div id="roomFill" class="progress-fill"></div>
       </div>
       <div id="roomText" class="progress-text">Yüklənir...</div>
     </div>
@@ -609,7 +610,7 @@
       }
 
       .progress-bar {
-        background: #eaeaea;
+        background: #ff8e3f; /* Qalan hissə narıncı */
         border-radius: 30px;
         overflow: hidden;
         height: 25px;
@@ -620,7 +621,7 @@
         height: 100%;
         width: 0;
         border-radius: 30px;
-        background: linear-gradient(90deg, #00a86b, #ff8e3f);
+        background: #00a86b; /* Dolu hissə yaşıl */
         transition: width 1.2s ease;
       }
 
@@ -659,6 +660,7 @@
 
       loadRoomStats();
     </script>
+
 
 
 
