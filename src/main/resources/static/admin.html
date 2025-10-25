@@ -14,9 +14,9 @@
 
     :root {
       /* Əsas rənglər */
-      --primary: #4f9cff;       /* açıq mavi */
-      --primary-dark: #1f75fe;  /* daha dərin mavi */
-      --secondary: #6fcf97;     /* açıq yaşıl */
+      --primary: #ff6f26;       /* açıq mavi */
+      --primary-dark: #ff7a35;  /* daha dərin mavi */
+      --secondary: #00ff6c;     /* açıq yaşıl */
       --accent: #f59ca9;        /* yumşaq çəhrayı */
 
       /* Fon rəngləri */
@@ -26,7 +26,7 @@
 
       /* Mətn rəngləri */
       --text-primary: #1f2937;  /* tünd mavi-gri */
-      --text-secondary: #006bff; /* yumşaq tünd gri */
+      --text-secondary: #1bff61; /* yumşaq tünd gri */
 
       /* Border və vəziyyət rəngləri */
       --border: #9ca3af;        /* açıq gri */
@@ -221,7 +221,6 @@
       font-weight: 700;
       background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
       -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
@@ -252,7 +251,7 @@
     }
 
     .stat-card {
-      background: rgba(0, 229, 94, 0.9);
+      background: rgba(0, 255, 103, 0.9);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(156, 163, 175, 0.2);
       border-radius: 16px;
@@ -521,7 +520,7 @@
 <div class="dashboard" id="dashboard">
   <div class="dashboard-container">
     <div class="dashboard-header">
-      <h1 class="dashboard-title">📊 Tələbə Statistikası</h1>
+      <h1 class="dashboard-title">📊 Statistika</h1>
       <button class="logout-btn" onclick="logout()">Çıxış</button>
     </div>
 
@@ -584,6 +583,83 @@
         <div class="stat-change">Tələbə sayı</div>
       </div>
     </div>
+    <div class="room-progress-card">
+      <h3>Otaqların Doluluq Faizi</h3>
+      <div class="progress-bar">
+        <div class="progress-fill" id="roomFill"></div>
+      </div>
+      <div id="roomText" class="progress-text">Yüklənir...</div>
+    </div>
+
+    <style>
+      .room-progress-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 25px;
+        width: 350px;
+        margin: 30px auto;
+        text-align: center;
+        font-family: 'Poppins', sans-serif;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+
+      .room-progress-card h3 {
+        font-weight: 600;
+        color: #333;
+      }
+
+      .progress-bar {
+        background: #eaeaea;
+        border-radius: 30px;
+        overflow: hidden;
+        height: 25px;
+        margin-top: 15px;
+      }
+
+      .progress-fill {
+        height: 100%;
+        width: 0;
+        border-radius: 30px;
+        background: linear-gradient(90deg, #00a86b, #ff8e3f);
+        transition: width 1.2s ease;
+      }
+
+      .progress-text {
+        font-size: 18px;
+        font-weight: 600;
+        margin-top: 12px;
+        color: #444;
+      }
+    </style>
+
+    <script>
+      const baseUrl1 =
+              window.location.hostname === "localhost"
+                      ? "http://localhost:8080/api/rooms"
+                      : "https://exam-registration.onrender.com/api/rooms";
+
+      async function loadRoomStats() {
+        try {
+          const totalCapacity = await fetch(`${baseUrl1}/total-capacity`).then(r => r.json());
+          const totalCurrent = await fetch(`${baseUrl1}/total-current`).then(r => r.json());
+
+          const percent = totalCapacity === 0 ? 0 : ((totalCurrent / totalCapacity) * 100).toFixed(1);
+
+          const fill = document.getElementById('roomFill');
+          fill.style.width = percent + '%';
+          fill.setAttribute('aria-valuenow', percent);
+
+          document.getElementById('roomText').innerText =
+                  `${percent}% dolu (${totalCurrent}/${totalCapacity})`;
+        } catch (err) {
+          console.error("API çağırışı zamanı xəta baş verdi:", err);
+          document.getElementById('roomText').innerText = "Xəta baş verdi!";
+        }
+      }
+
+      loadRoomStats();
+    </script>
+
 
 
 
@@ -591,13 +667,7 @@
     <div class="table-section">
       <div class="table-header">
         <h2 class="table-title">📋 Qeydiyyatdan Keçən Tələbələr</h2>
-        <input
-                type="text"
-                class="search-box"
-                id="searchBox"
-                placeholder="Tələbə adı ilə axtar..."
-                onkeyup="filterTable()"
-        >
+
       </div>
 
       <table id="studentTable">
@@ -755,6 +825,10 @@
       document.getElementById("passwordInput").value = "";
       document.getElementById("loginBtn").classList.remove("loading");
       document.getElementById("btnText").textContent = "Daxil Ol";
+
+        // Sonra index.html-ə yönləndir
+        window.location.href = "index.html";
+
     }
   }
 
