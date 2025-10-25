@@ -74,4 +74,15 @@ public class RoomController {
                 "status", remaining > 0 ? "mövcuddur ✅" : "dolu ❌"
         ));
     }
+
+    @GetMapping("/total-capacity")
+    public int getTotalCapacity() {
+        return roomService.getTotalCapacity();
+    }
+
+    @GetMapping("/total-current")
+    public int getTotalCurrentCount() {
+        return roomService.getTotalCurrentCount();
+    }
+
 }

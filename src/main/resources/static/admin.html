@@ -14,9 +14,9 @@
 
     :root {
       /* Əsas rənglər */
-      --primary: #4f9cff;       /* açıq mavi */
+      --primary: #ff691a;       /* açıq mavi */
       --primary-dark: #1f75fe;  /* daha dərin mavi */
-      --secondary: #6fcf97;     /* açıq yaşıl */
+      --secondary: #00b236;     /* açıq yaşıl */
       --accent: #f59ca9;        /* yumşaq çəhrayı */
 
       /* Fon rəngləri */
@@ -26,7 +26,7 @@
 
       /* Mətn rəngləri */
       --text-primary: #1f2937;  /* tünd mavi-gri */
-      --text-secondary: #006bff; /* yumşaq tünd gri */
+      --text-secondary: #ff8400; /* yumşaq tünd gri */
 
       /* Border və vəziyyət rəngləri */
       --border: #9ca3af;        /* açıq gri */
@@ -221,7 +221,6 @@
       font-weight: 700;
       background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
       -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
@@ -529,14 +528,14 @@
     <div class="stats-grid">
       <div class="stat-card purple-card">
         <div class="stat-icon">👥</div>
-        <div class="stat-label">Ümumi Tələbə</div>
+        <div class="stat-label"><b>Ümumi tələbə</b></div>
         <div class="stat-value" id="total">-</div>
         <div class="stat-change">Qeydiyyatdan keçmiş</div>
       </div>
 
       <div class="stat-card">
         <div class="stat-icon">📚</div>
-        <div class="stat-label">9-cu Sinif</div>
+        <div class="stat-label"><b>9-cu Sinif</b></div>
         <div class="stat-value" id="grade9">-</div>
         <div class="stat-change">Tələbə sayı</div>
       </div>
@@ -557,7 +556,7 @@
 
       <div class="stat-card purple-card">
         <div class="stat-icon">💰</div>
-        <div class="stat-label">Ümumi Ödəniş</div>
+        <div class="stat-label"><b>Ümumi Ödəniş</b></div>
         <div class="stat-value" id="totalPayment">-</div>
         <div class="stat-change">AZN</div>
       </div>
@@ -584,20 +583,69 @@
         <div class="stat-change">Tələbə sayı</div>
       </div>
     </div>
+    <div class="room-progress-card">
+      <h3>Otaqların Doluluq Faizi</h3>
+      <div class="progress-bar">
+        <div class="progress-fill" id="roomFill"></div>
+      </div>
+      <div id="roomText" class="progress-text">Yüklənir...</div>
+    </div>
+<style>
+  .room-progress-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 25px;
+    width: 350px;
+    margin: 30px auto;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
 
+  .progress-bar {
+    background: #eaeaea;
+    border-radius: 30px;
+    overflow: hidden;
+    height: 25px;
+    margin-top: 10px;
+  }
 
+  .progress-fill {
+    height: 100%;
+    width: 0;
+    border-radius: 30px;
+    background: linear-gradient(90deg, #00c853, #ff8e3f);
+    transition: width 1.2s ease;
+  }
+
+  .progress-text {
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 10px;
+    color: #444;
+  }
+
+</style>
+
+    <script>
+      async function loadRoomStats() {
+        const totalCapacity = await fetch("http://localhost:8080/api/rooms/total-capacity").then(r => r.json());
+        const totalCurrent = await fetch("http://localhost:8080/api/rooms/total-current").then(r => r.json());
+
+        const percent = totalCapacity === 0 ? 0 : ((totalCurrent / totalCapacity) * 100).toFixed(1);
+
+        const fill = document.getElementById('roomFill');
+        fill.style.width = percent + '%';
+
+        document.getElementById('roomText').innerText = `${percent}% dolu (${totalCurrent}/${totalCapacity})`;
+      }
+      loadRoomStats();
+    </script>
 
     <!-- Table Section -->
     <div class="table-section">
       <div class="table-header">
         <h2 class="table-title">📋 Qeydiyyatdan Keçən Tələbələr</h2>
-        <input
-                type="text"
-                class="search-box"
-                id="searchBox"
-                placeholder="Tələbə adı ilə axtar..."
-                onkeyup="filterTable()"
-        >
       </div>
 
       <table id="studentTable">
