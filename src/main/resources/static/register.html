@@ -299,18 +299,23 @@
         <label for="studentType" style="font-size:15px;">Qrup seçin:</label><br>
         <select id="studentType" name="studentType" required onchange="updatePaymentAmount()">
             <option value="">Seçin...</option>
-            <option value="S">S qrupu</option>
-            <option value="BSP">BSP LearnUp tələbəsi</option>
+            <option value="BSP">BSP tələbəsi</option>
             <option value="Other">Kənar tələbə</option>
         </select><br><br>
         <label for="studentType" style="font-size:15px;">Ödəniş:</label><br>
 
         <input type="number" id="paymentAmount" name="paymentAmount" step="0.01" placeholder="Ödəniş məbləği (AZN)" readonly required><br><br>
+        <label for="examTime" style="font-size:15px;">İmtahan vaxtı:</label><br>
+        <select id="examTime" name="examTime" required>
+            <option value="">Saat seçin</option>
+            <option value="10:00">10:00</option>
+            <option value="17:00">17:00</option>
+        </select><br><br>
 
 
         <select name="examId" required>
             <option value="">İmtahan seçin</option>
-            <option value="2">Riyaziyyat Sınaq 2</option>
+            <option value="4">Riyaziyyat 0-dan 100-ə</option>
         </select><br><br>
 
         <div style="display:flex;align-items:center;gap:10px;">
@@ -331,7 +336,7 @@
         <div class="card-header">
             <img src="mathbsp-az-qr-code.png" alt="QR Kod" style="width:80px;height:80px;">
             <div style="text-align:right;">
-                <h1>Riyaziyyat Buraxılış Sınaq 2</h1>
+                <h1>Riyaziyyat 0-dan 100-ə</h1>
                 <p><span id="cardDate"></span> | <span id="cardTime"></span></p>
             </div>
         </div>
@@ -341,7 +346,7 @@
         <p><strong>Otaq / Yer:</strong> <span id="cardRoom"></span> | <span id="cardSeat"></span></p>
         <p><strong>BSP tələbəsidir:</strong> <span id="cardBsp"></span></p>
         <p><strong>Ünvan:</strong> Bakıxanov qəs., Villa Plaza</p>
-        <p><strong>Saat:</strong> 10:00</p>
+        <p><strong>Saat:</strong> <span id="cardExamTime"></span></p>
     </div>
     <div class="btn-group">
         <button onclick="printCard()">Çap et</button>
@@ -356,16 +361,13 @@
 
         // Avtomatik doldurma və BSP statusunun idarəsi
         switch(type) {
-            case "S":
+            case "BSP":
                 paymentInput.value = 0;
                 bspCheckbox.checked = true;
                 break;
-            case "BSP":
-                paymentInput.value = 5;
-                bspCheckbox.checked = true;
-                break;
+
             case "Other":
-                paymentInput.value = 7;
+                paymentInput.value = 10;
                 bspCheckbox.checked = false;
                 break;
             default:
@@ -392,6 +394,8 @@
         const formData = Object.fromEntries(new FormData(e.target).entries());
         formData.bspStudent = document.getElementById('bspStudent').checked;
         formData.examId = parseInt(formData.examId);
+        formData.examTime = document.getElementById('examTime').value; // ✅ Bu sətri əlavə et
+
 
         const resultDiv = document.getElementById('result');
         const cardContainer = document.getElementById('cardContainer');
@@ -406,6 +410,7 @@
             const student = await res.json();
 
             // Kart məlumatları
+            document.getElementById('cardExamTime').innerText = formData.examTime;
             document.getElementById('cardName').innerText = `${student.name} ${student.surname} ${student.fatherName}`;
             document.getElementById('cardGrade').innerText = student.grade;
             document.getElementById('cardCode').innerText = student.studentCode;
@@ -541,8 +546,8 @@
             <p><strong>Otaq:</strong> ${document.getElementById('cardRoom').textContent} </p>
             <p><strong>Yer:</strong> ${document.getElementById('cardSeat').textContent}</p>
             <p><strong>BSP LearnUp tələbəsidir:</strong> ${document.getElementById('cardBsp').textContent}</p>
-            <p><strong>Tarix:</strong> 02.11.2025</p>
-            <p><strong>Saat:</strong> 10:00</p>
+            <p><strong>Tarix:</strong> 09.11.2025</p>
+            <p><strong>Saat:</strong> ${document.getElementById('cardExamTime').textContent}</p>
             <p><strong>Ünvan:</strong> Bakıxanov qəs., Villa Plaza</p>
             <p>Biletin satış tarixi: ${document.getElementById('cardDate').textContent} | ${document.getElementById('cardTime').textContent}</p>
           </div>

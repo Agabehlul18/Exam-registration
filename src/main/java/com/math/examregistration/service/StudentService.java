@@ -69,6 +69,8 @@ public class StudentService {
         student.setRoom(room);
         student.setSeatNo(seatNo);
         student.setStudentCode(code);
+        student.setExamTime(dto.getExamTime());
+
 
         // 🔹 Uşağın verdiyi məbləği birbaşa yazırıq
         student.setPaymentAmount(dto.getPaymentAmount());

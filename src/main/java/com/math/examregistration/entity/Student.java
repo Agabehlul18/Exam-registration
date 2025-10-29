@@ -23,6 +23,9 @@ public class Student {
 
     private String studentCode;
     private int seatNo; // otaqdakı yer nömrəsi
+    @Column(name = "exam_time")
+    private String examTime; // imtahan saatı
+
 
     @ManyToOne
     @JoinColumn(name = "exam_id")

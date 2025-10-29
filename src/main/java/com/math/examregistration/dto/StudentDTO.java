@@ -11,5 +11,7 @@ public class StudentDTO {
     private String phone;
     private boolean bspStudent;
     private double paymentAmount;
-    private Long examId; // imtahan ID-si (select-dən gələcək)
+    private Long examId;
+    private String examTime;
+
 }
