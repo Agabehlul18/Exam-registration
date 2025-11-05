@@ -103,20 +103,19 @@
 <div class="card-container" id="cardContainer" style="display:none;">
     <div class="card" id="printCard">
         <img src="mathbsp-az-qr-code.png" alt="QR Kod" style="width:100px;height:100px;float:left;margin-right:10px;">
-        <h1>Riyaziyyat Buraxılış Sınaq 2</h1>
+        <h1>Riyaziyyat 0-dan 100-ə</h1>
         <h2><strong>Ad Soyad Ata adı:</strong> <span id="cardName"></span></h2>
         <p><strong>İş nömrəsi:</strong> <span id="cardCode"></span></p>
         <p><strong>Sinif:</strong> <span id="cardGrade"></span></p>
         <p><strong>Otaq:</strong> <span id="cardRoom"></span></p>
         <p><strong>Yer:</strong> <span id="cardSeat"></span></p>
         <p><strong>BSP LearnUp tələbəsidir:</strong> <span id="cardBsp"></span></p>
-        <p><strong>Tarix:</strong> 2 Noyabr 2025</p>
-        <p><strong>Saat:</strong> 10:00</p>
+        <p><strong>Tarix:</strong> <span id="cardDate">09.11.2025</span></p>
+        <p><strong>Saat:</strong> <span id="cardTime"></span></p>
         <p><strong>Ünvan:</strong> Bakıxanov qəs., Villa Plaza</p>
     </div>
     <div class="btn-group">
         <button onclick="printCard()">Çap et</button>
-        <button onclick="downloadPDF()">PDF Yüklə</button>
     </div>
 </div>
 
@@ -135,9 +134,9 @@
                 const div = document.createElement('div');
                 div.className = 'student-item';
                 div.innerHTML = `
-          ${student.name} ${student.surname} | Sinif: ${student.grade} | Otaq: ${student.room?.roomNo || '-'}
-          <button onclick='showExamCard(${JSON.stringify(student)})'>Buraxılış Vərəqəsi</button>
-        `;
+                    ${student.name} ${student.surname} | Sinif: ${student.grade} | Otaq: ${student.room?.roomNo || '-'}
+                    <button onclick='showExamCard(${JSON.stringify(student)})'>Buraxılış Vərəqəsi</button>
+                `;
                 container.appendChild(div);
             });
         } catch (err) {
@@ -154,7 +153,13 @@
         document.getElementById('cardSeat').innerText = student.seatNo || '1';
         document.getElementById('cardBsp').innerHTML = student.bspStudent
             ? "<span style='color:green;font-weight:bold;'>Bəli ✅</span>"
-            : "<span style='color:red;font-weight:bold;'>Xeyr ❌</span>";        document.getElementById('cardContainer').style.display = 'block';
+            : "<span style='color:red;font-weight:bold;'>Xeyr ❌</span>";
+
+        // Tarix və saat database-dən gələcək
+        document.getElementById('cardDate').innerText = "09.11.2025";
+        document.getElementById('cardTime').innerText = student.examTime || "—";
+
+        document.getElementById('cardContainer').style.display = 'block';
         document.getElementById('cardContainer').scrollIntoView({behavior: 'smooth'});
     }
 
@@ -165,91 +170,60 @@
         const room = document.getElementById('cardRoom').textContent;
         const seat = document.getElementById('cardSeat').textContent;
         const cardBsp = document.getElementById('cardBsp').textContent;
+        const time = document.getElementById('cardTime').textContent;
 
         const printWindow = window.open('', '_blank');
         printWindow.document.write(`
-      <!DOCTYPE html>
-      <html lang="az">
-      <head>
-        <meta charset="UTF-8">
-        <title>Riyaziyyat Buraxılış Sınaq 2</title>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-        <style>
-          @page { margin: 0; size: A4; }
-          body {
-            margin: 0;
-            padding: 40px;
-            font-family: 'Inter', sans-serif;
-            background: #f6f8fa;
-          }
-          .ticket {
-            width: 90%;
-            margin: auto;
-            background: #fff;
-            border: 8px solid #27ae60;
-            border-radius: 20px;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            padding: 30px;
-          }
-          .info p {
-            margin: 6px 0;
-            font-size: 16px;
-          }
-          .social h3 {
-            color: #ff7b00;
-            margin-bottom: 12px;
-          }
-          .qr img {
-            width: 120px;
-            height: 120px;
-            border: 2px solid #27ae60;
-          }
-          .footer {
-            text-align: center;
-            font-weight: 600;
-            color: #27ae60;
-            margin-top: 20px;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="ticket">
-          <div class="left">
-            <h1>Riyaziyyat Buraxılış Sınaq 2</h1>
-            <div class="info">
-              <p><strong>Ad Soyad Ata adı:</strong> ${name}</p>
-              <p><strong>İş nömrəsi:</strong> ${code}</p>
-              <p><strong>Sinif:</strong> ${grade}</p>
-              <p><strong>Otaq:</strong> ${room}</p>
-              <p><strong>Yer:</strong> ${seat}</p>
-              <p><strong>BSP LearnUp tələbəsidir:</strong> ${cardBsp}</p>
-              <p><strong>Tarix:</strong> 02.11.2025</p>
-              <p><strong>Saat:</strong> 10:00</p>
-              <p><strong>Ünvan:</strong> Bakıxanov qəs., Villa Plaza</p>
-            </div>
-           <p class="footer">🧮 BSP LearnUp ilə fərq yarat!<br>“Əziyyət çək, zirvəyə qalx!”</p>
-
-          </div>
-          <div class="right">
-            <div class="social">
-              <h3>📱 Bizi izləyin:</h3>
-              <p>🎥 YouTube: <b>Riyaziyyat hər kəs üçün</b></p>
-              <p>📸 Instagram: <b>math.bsp.az</b> | <b>bsplearnup</b></p>
-              <p>💬 Telegram: <b>riyaziyyatherkesucun</b></p>
-              <p>🌐 Sayt: <b>mathbsp.az</b></p>
-              <p>📞 Əlaqə: <b>070 621 12 29</b></p>
-            </div>
-            <div class="qr">
-              <img src="mathbsp-az-qr-code.png" alt="QR Kod">
-            </div>
-
-          </div>
-        </div>
-      </body>
-      </html>
-    `);
+            <!DOCTYPE html>
+            <html lang="az">
+            <head>
+                <meta charset="UTF-8">
+                <title>Riyaziyyat 0-dan 100-ə</title>
+                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+                <style>
+                    @page { margin: 0; size: A4; }
+                    body { margin: 0; padding: 40px; font-family: 'Inter', sans-serif; background: #f6f8fa; }
+                    .ticket { width: 90%; margin: auto; background: #fff; border: 8px solid #27ae60; border-radius: 20px; display: flex; flex-direction: row; justify-content: space-between; padding: 30px; }
+                    .info p { margin: 6px 0; font-size: 16px; }
+                    .social h3 { color: #ff7b00; margin-bottom: 12px; }
+                    .qr img { width: 120px; height: 120px; border: 2px solid #27ae60; }
+                    .footer { text-align: center; font-weight: 600; color: #27ae60; margin-top: 20px; }
+                </style>
+            </head>
+            <body>
+                <div class="ticket">
+                    <div class="left">
+                        <h2>Riyaziyyat 0-dan 100-ə</h2>
+                        <div class="info">
+                            <p><strong>Ad Soyad Ata adı:</strong> ${name}</p>
+                            <p><strong>İş nömrəsi:</strong> ${code}</p>
+                            <p><strong>Sinif:</strong> ${grade}</p>
+                            <p><strong>Otaq:</strong> ${room}</p>
+                            <p><strong>Yer:</strong> ${seat}</p>
+                            <p><strong>BSP LearnUp tələbəsidir:</strong> ${cardBsp}</p>
+                            <p><strong>Tarix:</strong> 09.11.2025</p>
+                            <p><strong>Saat:</strong> ${time}</p>
+                            <p><strong>Ünvan:</strong> Bakıxanov qəs., Villa Plaza</p>
+                        </div>
+                        <p class="footer">🧮 BSP LearnUp ilə fərq yarat!<br>“Əziyyət çək, zirvəyə qalx!”</p>
+                    </div>
+                    <div class="right">
+                        <div class="social">
+                            <h3>📱 Bizi izləyin:</h3>
+                            <p>🎥 YouTube: <b>Riyaziyyat hər kəs üçün</b></p>
+                            <p>📸 Instagram: <b>math.bsp.az</b> | <b>bsplearnup</b></p>
+                            <p>💬 Telegram: <b>riyaziyyatherkesucun</b></p>
+                            <p>🌐 Sayt: <b>mathbsp.az</b></p>
+                            <p>📞 Əlaqə: <b>070 621 12 29</b></p>
+                        </div>
+                        <div class="qr">
+                            <img src="mathbsp-az-qr-code.png" alt="QR Kod">
+                        </div>
+                    </div>
+                </div>
+            </body>
+            </html>
+        `);
         printWindow.document.close();
         setTimeout(() => printWindow.print(), 300);
     }
