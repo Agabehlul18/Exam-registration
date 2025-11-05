@@ -48,10 +48,12 @@ public class StudentService {
             throw new StudentAlreadyRegisteredException("Bu şagird artıq bu imtahan üçün qeydiyyatdan keçib!");
         });
 
-        // 3️⃣ Boş otaq tap və oturacaq nömrəsini təyin et
-        Room room = roomService.assignAvailableRoom();
+        // 3️⃣ Boş otaq tap və oturacaq nömrəsini təyin et (vaxta əsasən)
+        Room room = roomService.assignAvailableRoomByTime(dto.getExamTime());
+        System.out.println(dto.getExamTime());
         int seatNo = room.getCurrentCount() + 1;
         log.info("Tələbə üçün otaq təyin olundu: {} (oturacaq №{})", room.getRoomNo(), seatNo);
+
 
         // 4️⃣ Unikal kod yarat
         String code = generateUniqueStudentCode();
