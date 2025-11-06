@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSP Otaq idarəetmə sistemi</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --accent: #10b981;
+      --accent-dark: #059669;
+      --bg: #f5f5f7;
+      --bg-card: #ffffff;
+      --text: #1a1a1a;
+      --text-muted: #999999;
+      --border: rgba(0, 0, 0, 0.08);
+    }
+
+    body.dark-mode {
+      --bg: #0f0f0f;
+      --bg-card: rgba(30, 30, 30, 0.5);
+      --text: #e4e4e7;
+      --text-muted: #aaaaaa;
+      --border: rgba(255, 255, 255, 0.1);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, var(--bg) 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.6;
+      transition: background 0.3s ease;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* ============================================
+       HEADER
+       ============================================ */
+    header {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 32px;
+      border-radius: 12px;
+    }
+
+    body.dark-mode header {
+      background: rgba(30, 30, 30, 0.8);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .header-content h1 {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .header-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* ============================================
+       BUTTONS & INPUTS
+       ============================================ */
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    body.dark-mode .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+
+    body.dark-mode .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .search-box {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.04);
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      flex: 1;
+      min-width: 200px;
+    }
+
+    body.dark-mode .search-box {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .search-box input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      outline: none;
+      color: inherit;
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* ============================================
+       VIEW SECTIONS
+       ============================================ */
+    .view-section {
+      display: none;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    /* ============================================
+       OVERVIEW - ROOM CARDS
+       ============================================ */
+    .rooms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .room-card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      cursor: pointer;
+    }
+
+    .room-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    body.dark-mode .room-card:hover {
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .room-card-header {
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 12px;
+    }
+
+    .room-card h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .room-card-time {
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .room-card-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .room-card-progress {
+      background: rgba(0, 0, 0, 0.05);
+      height: 6px;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    body.dark-mode .room-card-progress {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .room-card-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border-radius: 3px;
+      transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* ============================================
+       DETAILED VIEW
+       ============================================ */
+    .detail-header {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 28px;
+      border: 1px solid var(--border);
+      margin-bottom: 28px;
+    }
+
+    .detail-header h2 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .detail-header-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .info-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .info-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* ============================================
+       SEATS GRID
+       ============================================ */
+    .seats-container {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 28px;
+      border: 1px solid var(--border);
+    }
+
+    .seats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 12px;
+    }
+
+    .seat {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .seat::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.1);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .seat:hover::before {
+      opacity: 1;
+    }
+
+    .seat-text {
+      position: relative;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .seat-number {
+      font-size: 11px;
+      opacity: 0.6;
+      margin-top: 2px;
+    }
+
+    /* Occupied seat */
+    .seat.occupied {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      border-color: rgba(16, 185, 129, 0.5);
+    }
+
+    .seat.occupied:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Empty seat */
+    .seat.empty {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--text-muted);
+      border-color: var(--border);
+    }
+
+    .seat.empty:hover {
+      background: rgba(0, 0, 0, 0.08);
+      border-color: rgba(0, 0, 0, 0.15);
+    }
+
+    body.dark-mode .seat.empty:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    /* ============================================
+       MODAL
+       ============================================ */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+    }
+
+    .modal-backdrop.active {
+      display: block;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.95);
+      background: var(--bg-card);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      z-index: 1001;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .modal.active {
+      display: block;
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .modal-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close:hover {
+      color: var(--text);
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .detail-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      text-align: right;
+    }
+
+    /* ============================================
+       EMPTY STATE
+       ============================================ */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+    }
+
+    .loader {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(0, 0, 0, 0.1);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    body.dark-mode .loader {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error-message {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 16px 0;
+      border-left: 4px solid #dc2626;
+    }
+
+    body.dark-mode .error-message {
+      background: rgba(127, 29, 29, 0.3);
+      color: #fca5a5;
+      border-left-color: #ef4444;
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 768px) {
+      .container {
+        padding: 16px;
+      }
+
+      header {
+        margin-bottom: 24px;
+        padding: 16px 0;
+      }
+
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .header-content h1 {
+        font-size: 24px;
+      }
+
+      .header-controls {
+        width: 100%;
+        flex-direction: column;
+      }
+
+      .search-box {
+        width: 100%;
+      }
+
+      .rooms-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-header {
+        padding: 20px;
+      }
+
+      .detail-header h2 {
+        font-size: 24px;
+      }
+
+      .detail-header-info {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .seats-container {
+        padding: 20px;
+      }
+
+      .seats-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+
+      .modal {
+        width: 95%;
+        max-height: 90vh;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- HEADER -->
+  <header>
+    <div class="header-content">
+      <h1>BSP Otaq idarəetmə sistemi</h1>
+      <div class="header-controls">
+        <div class="search-box">
+          <span>🔍</span>
+          <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="Search rooms or exam time..."
+                  aria-label="Search rooms"
+          >
+        </div>
+        <button class="btn btn-secondary" id="toggleViewBtn">
+          <span id="toggleIcon">📋</span>
+          <span id="toggleLabel">Detail View</span>
+        </button>
+        <button class="btn btn-secondary" id="toggleDarkBtn" title="Toggle dark mode">
+          <span id="darkIcon">🌙</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- OVERVIEW VIEW -->
+  <section id="overviewView" class="view-section active">
+    <div id="roomsContainer" class="rooms-grid">
+      <div class="loading" style="grid-column: 1 / -1;">
+        <div class="loader"></div>
+        <p>İmtahan otaqları yüklənir...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DETAILED VIEW -->
+  <section id="detailView" class="view-section">
+    <div id="detailContent">
+      <div class="loading">
+        <div class="loader"></div>
+        <p>Select a room to view details</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- MODAL FOR STUDENT DETAILS -->
+<div id="modalBackdrop" class="modal-backdrop"></div>
+<div id="studentModal" class="modal">
+  <div class="modal-header">
+    <h3>Şagird məlumatları</h3>
+    <button class="modal-close" id="modalClose">×</button>
+  </div>
+  <div class="modal-body" id="modalBody"></div>
+</div>
+
+<script>
+  // ============================================
+  // STATE MANAGEMENT
+  // ============================================
+  const state = {
+    currentView: 'overview',
+    allRooms: [],
+    selectedRoomId: null,
+    selectedStudent: null,
+    filteredRooms: [],
+    loading: true,
+    error: null,
+  };
+
+  // ============================================
+  // API & DATA FETCHING
+  // ============================================
+  async function fetchAndGroupStudents() {
+    try {
+      state.loading = true;
+      state.error = null;
+
+      // Determine API base URL
+      const isDev = window.location.hostname === 'localhost';
+      const API_BASE = isDev
+              ? 'http://localhost:8080/api'
+              : 'https://exam-registration.onrender.com/api';
+
+      const response = await fetch(`${API_BASE}/students`);
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch: ${response.statusText}`);
+      }
+
+      const students = await response.json();
+
+      // Group students by room
+      const roomsMap = new Map();
+
+      students.forEach(student => {
+        const roomNo = student.room?.roomNo || 'Unknown';
+
+        if (!roomsMap.has(roomNo)) {
+          roomsMap.set(roomNo, {
+            roomNo,
+            roomName: student.exam?.roomName || `Room ${roomNo}`,
+            capacity: student.room?.capacity || 0,
+            examTime: student.examTime || 'N/A',
+            examName: student.exam?.examName || 'Unknown Exam',
+            examDate: student.exam?.date || 'N/A',
+            seats: []
+          });
+        }
+
+        const room = roomsMap.get(roomNo);
+        room.seats.push({
+          seatNo: student.seatNo,
+          occupied: true,
+          student: {
+            id: student.id,
+            name: student.name,
+            surname: student.surname,
+            fatherName: student.fatherName || 'N/A',
+            grade: student.grade || 'N/A',
+            phone: student.phone || 'N/A',
+            studentCode: student.studentCode
+          }
+        });
+      });
+
+      // Convert map to array and add empty seats
+      state.allRooms = Array.from(roomsMap.values())
+              .map(room => {
+                const occupiedSeats = room.seats.map(s => s.seatNo);
+                const allSeats = [];
+
+                for (let i = 1; i <= room.capacity; i++) {
+                  const occupied = occupiedSeats.includes(i);
+                  const existingSeat = room.seats.find(s => s.seatNo === i);
+
+                  allSeats.push({
+                    seatNo: i,
+                    occupied: occupied,
+                    student: existingSeat?.student || null
+                  });
+                }
+
+                return {
+                  ...room,
+                  seats: allSeats.sort((a, b) => a.seatNo - b.seatNo),
+                  filledCount: room.seats.length
+                };
+              })
+              .sort((a, b) => {
+                const aPrefix = a.roomNo.match(/^[A-Z]/)?.[0] || '';
+                const bPrefix = b.roomNo.match(/^[A-Z]/)?.[0] || '';
+                return aPrefix.localeCompare(bPrefix) || a.roomNo.localeCompare(b.roomNo);
+              });
+
+      state.filteredRooms = [...state.allRooms];
+      state.loading = false;
+      render();
+
+    } catch (error) {
+      console.error('[v0] Fetch error:', error);
+      state.error = error.message || 'Failed to load exam rooms. Please try again.';
+      state.loading = false;
+      render();
+    }
+  }
+
+  // ============================================
+  // UI RENDERING FUNCTIONS
+  // ============================================
+
+  function renderOverviewView() {
+    const container = document.getElementById('roomsContainer');
+
+    if (state.loading) {
+      container.innerHTML = `
+        <div class="loading" style="grid-column: 1 / -1;">
+          <div class="loader"></div>
+          <p>Loading exam rooms...</p>
+        </div>
+      `;
+      return;
+    }
+
+    if (state.error) {
+      container.innerHTML = `
+        <div class="error-message" style="grid-column: 1 / -1;">
+          <strong>Error:</strong> ${state.error}
+        </div>
+      `;
+      return;
+    }
+
+    if (state.filteredRooms.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state" style="grid-column: 1 / -1;">
+          <div class="empty-state-icon">📭</div>
+          <p>No rooms found matching your search.</p>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = state.filteredRooms.map(room => {
+      const percentage = room.capacity > 0
+              ? Math.round((room.filledCount / room.capacity) * 100)
+              : 0;
+
+      return `
+        <div class="room-card" onclick="selectRoom('${room.roomNo}')">
+          <div class="room-card-header">
+            <h3>${room.roomNo}</h3>
+            <div class="room-card-time">
+              <span>🕐</span>
+              <span>${room.examTime}</span>
+            </div>
+          </div>
+
+          <div class="room-card-stats">
+            <div class="stat">
+              <div class="stat-number">${room.filledCount}</div>
+              <div class="stat-label">Filled</div>
+            </div>
+            <div class="stat">
+              <div class="stat-number">${room.capacity}</div>
+              <div class="stat-label">Capacity</div>
+            </div>
+            <div class="stat">
+              <div class="stat-number">${room.capacity - room.filledCount}</div>
+              <div class="stat-label">Empty</div>
+            </div>
+          </div>
+
+          <div class="room-card-progress">
+            <div class="room-card-progress-bar" style="width: ${percentage}%"></div>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-primary" onclick="selectRoom('${room.roomNo}'); event.stopPropagation();">
+              <span>👁️</span>
+              View Layout
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderDetailedView() {
+    const container = document.getElementById('detailContent');
+
+    if (state.loading) {
+      container.innerHTML = `
+        <div class="loading">
+          <div class="loader"></div>
+          <p>Loading...</p>
+        </div>
+      `;
+      return;
+    }
+
+    if (!state.selectedRoomId || state.allRooms.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">📍</div>
+          <p>Select a room from the overview to view details</p>
+          <button class="btn btn-primary" style="margin-top: 16px;" onclick="switchView('overview')">
+            Back to Overview
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    const room = state.allRooms.find(r => r.roomNo === state.selectedRoomId);
+
+    if (!room) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">❌</div>
+          <p>Room not found</p>
+        </div>
+      `;
+      return;
+    }
+
+    const remaining = room.capacity - room.filledCount;
+
+    container.innerHTML = `
+      <button class="btn btn-secondary" onclick="switchView('overview'); state.selectedRoomId = null;" style="margin-bottom: 24px;">
+        ← Back to Overview
+      </button>
+
+      <div class="detail-header">
+        <h2>${room.roomNo}</h2>
+
+        <div class="detail-header-info">
+          <div class="info-item">
+            <div class="info-label">📚 Exam</div>
+            <div class="info-value">${room.roomNo}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">📅 Date</div>
+            <div class="info-value">${room.examDate}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">🕐 Time</div>
+            <div class="info-value">${room.examTime}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">👥 Capacity</div>
+            <div class="info-value">${room.capacity}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">✓ Filled</div>
+            <div class="info-value">${room.filledCount}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">⬜ Empty</div>
+            <div class="info-value">${remaining}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="seats-container">
+        <div class="seats-grid">
+          ${room.seats.map(seat => renderSeat(room.roomNo, seat)).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderSeat(roomNo, seat) {
+    const seatClass = seat.occupied ? 'occupied' : 'empty';
+    const seatLabel = seat.occupied
+            ? `${seat.student.name} ${seat.student.surname}`
+            : 'Empty';
+
+    return `
+      <button
+        class="seat ${seatClass}"
+        onclick="selectSeat('${roomNo}', ${seat.seatNo})"
+        title="${seat.occupied
+            ? seat.student.name + ' ' + seat.student.surname + ' - ' + seat.student.studentCode
+            : 'Empty seat'}"
+      >
+        <span class="seat-text">
+          <span>${seatLabel}</span>
+          <span class="seat-number">#${seat.seatNo}</span>
+        </span>
+      </button>
+    `;
+  }
+
+  function render() {
+    if (state.currentView === 'overview') {
+      document.getElementById('overviewView').classList.add('active');
+      document.getElementById('detailView').classList.remove('active');
+      renderOverviewView();
+    } else {
+      document.getElementById('overviewView').classList.remove('active');
+      document.getElementById('detailView').classList.add('active');
+      renderDetailedView();
+    }
+  }
+
+  // ============================================
+  // EVENT HANDLERS
+  // ============================================
+
+  function switchView(view) {
+    state.currentView = view;
+    const btn = document.getElementById('toggleViewBtn');
+
+    if (view === 'overview') {
+      btn.innerHTML = '<span id="toggleIcon">📋</span><span id="toggleLabel">Detail View</span>';
+    } else {
+      btn.innerHTML = '<span id="toggleIcon">📊</span><span id="toggleLabel">Overview</span>';
+    }
+
+    render();
+  }
+
+  function selectRoom(roomNo) {
+    state.selectedRoomId = roomNo;
+    switchView('detailed');
+  }
+
+  function selectSeat(roomNo, seatNo) {
+    const room = state.allRooms.find(r => r.roomNo === roomNo);
+    if (!room) return;
+
+    const seat = room.seats.find(s => s.seatNo === seatNo);
+    if (!seat || !seat.occupied) return;
+
+    state.selectedStudent = {
+      ...seat.student,
+      seatNo,
+      roomName: room.roomNo,
+      examTime: room.examTime
+    };
+    showModal();
+  }
+
+  function showModal() {
+    const modal = document.getElementById('studentModal');
+    const backdrop = document.getElementById('modalBackdrop');
+    const body = document.getElementById('modalBody');
+
+    if (!state.selectedStudent) return;
+
+    const student = state.selectedStudent;
+
+    body.innerHTML = `
+      <div class="detail-row">
+        <span class="detail-label">Name</span>
+        <span class="detail-value">${student.name}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Surname</span>
+        <span class="detail-value">${student.surname}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Father's Name</span>
+        <span class="detail-value">${student.fatherName}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Grade</span>
+        <span class="detail-value">${student.grade}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Phone</span>
+        <span class="detail-value">${student.phone}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Student Code</span>
+        <span class="detail-value">${student.studentCode}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Room</span>
+        <span class="detail-value">${student.roomName}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Seat Number</span>
+        <span class="detail-value">#${student.seatNo}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Exam Time</span>
+        <span class="detail-value">${student.examTime}</span>
+      </div>
+    `;
+
+    modal.classList.add('active');
+    backdrop.classList.add('active');
+  }
+
+  function closeModal() {
+    const modal = document.getElementById('studentModal');
+    const backdrop = document.getElementById('modalBackdrop');
+
+    modal.classList.remove('active');
+    backdrop.classList.remove('active');
+    state.selectedStudent = null;
+  }
+
+  function filterRooms(searchTerm) {
+    const term = searchTerm.toLowerCase();
+
+    state.filteredRooms = state.allRooms.filter(room =>
+            room.roomName.toLowerCase().includes(term) ||
+            room.roomNo.toLowerCase().includes(term) ||
+            room.examTime.includes(term) ||
+            room.examName.toLowerCase().includes(term)
+    );
+
+    if (state.currentView === 'overview') {
+      renderOverviewView();
+    }
+  }
+
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+  }
+
+  // ============================================
+  // EVENT LISTENERS
+  // ============================================
+
+  document.getElementById('toggleViewBtn').addEventListener('click', () => {
+    const newView = state.currentView === 'overview' ? 'detailed' : 'overview';
+    if (newView === 'detailed' && !state.selectedRoomId && state.allRooms.length > 0) {
+      state.selectedRoomId = state.allRooms[0].roomNo;
+    }
+    switchView(newView);
+  });
+
+  document.getElementById('toggleDarkBtn').addEventListener('click', toggleDarkMode);
+
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    filterRooms(e.target.value);
+  });
+
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+
+  document.getElementById('modalBackdrop').addEventListener('click', closeModal);
+
+  document.getElementById('studentModal').addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.getElementById('modalBackdrop').classList.contains('active')) {
+      closeModal();
+    }
+  });
+
+  // ============================================
+  // INITIALIZATION
+  // ============================================
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Load dark mode preference
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.body.classList.add('dark-mode');
+      document.getElementById('darkIcon').textContent = '☀️';
+    }
+
+    fetchAndGroupStudents();
+  });
+</script>
+</body>
+</html>

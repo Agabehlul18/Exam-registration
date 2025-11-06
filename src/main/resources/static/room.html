@@ -143,12 +143,55 @@
         ? "http://localhost:8080/api"
         : "https://exam-registration.onrender.com/api";
 
-
     // Otaqları yüklə
     async function loadRooms() {
         try {
             const res = await fetch(`${API_BASE}/rooms`);
-            const rooms = await res.json();
+            let rooms = await res.json();
+
+            // Saatı təyin et (A → 10:00, B → 17:00)
+            rooms = rooms.map(room => {
+                let examTime = "Naməlum";
+                if (room.roomNo.startsWith("A")) examTime = "10:00";
+                else if (room.roomNo.startsWith("B")) examTime = "17:00";
+                return {...room, examTime};
+            });
+
+            // 🔽 Sıralama qaydası:
+            // 1. A otaqları (daxilində: tam dolu → yarı dolu → boş)
+            // 2. B otaqları
+            rooms.sort((a, b) => {
+                const aIsA = a.roomNo.startsWith("A");
+                const bIsA = b.roomNo.startsWith("A");
+
+                // Əvvəlcə A otaqları
+                if (aIsA && !bIsA) return -1;
+                if (!aIsA && bIsA) return 1;
+
+                // A otaqları daxilində sıralama
+                if (aIsA && bIsA) {
+                    const aPercent = a.currentCount / a.capacity;
+                    const bPercent = b.currentCount / b.capacity;
+
+                    // 1. Tam dolu otaqlar birinci
+                    const aFull = aPercent === 1;
+                    const bFull = bPercent === 1;
+                    if (aFull && !bFull) return -1;
+                    if (bFull && !aFull) return 1;
+
+                    // 2. Yarı dolu (>= 0.5) otaqlar sonra
+                    const aHalf = aPercent >= 0.5;
+                    const bHalf = bPercent >= 0.5;
+                    if (aHalf && !bHalf) return -1;
+                    if (bHalf && !aHalf) return 1;
+
+                    // 3. Digərləri (boş) sonda
+                    return a.roomNo.localeCompare(b.roomNo);
+                }
+
+                // B otaqları üçün sadəcə otaq nömrəsinə görə
+                return a.roomNo.localeCompare(b.roomNo);
+            });
 
             const container = document.getElementById('roomContainer');
             container.innerHTML = '';
@@ -160,12 +203,22 @@
                 const card = document.createElement('div');
                 card.className = 'room-card';
                 card.dataset.roomId = room.id;
+
+                // 💡 Rənglərlə fərqləndirək
+                let borderColor = "#4b56d2"; // default
+                if (room.currentCount === room.capacity) borderColor = "#dc3545"; // tam dolu → qırmızı
+                else if ((room.currentCount / room.capacity) >= 0.5) borderColor = "#ffc107"; // yarı dolu → sarı
+                else borderColor = "#198754"; // az dolu → yaşıl
+
+                card.style.borderColor = borderColor;
+
                 card.innerHTML = `
                 <div class="room-header">
                     <div class="room-name">${room.roomNo}</div>
                     <div class="room-stats">Tutum: ${room.capacity} nəfər</div>
                 </div>
-                <div class="progress">
+                <div><strong>🕓 Saat:</strong> ${room.examTime}</div>
+                <div class="progress mt-2">
                     <div class="progress-bar" style="width: ${percent}%;"></div>
                 </div>
                 <div class="remaining">
@@ -174,6 +227,7 @@
                 <div class="students-list" style="display:none;"></div>
             `;
 
+                // Kliklədikdə tələbələri göstər
                 card.addEventListener('click', async () => {
                     const listDiv = card.querySelector('.students-list');
                     if (listDiv.style.display === 'block') {
