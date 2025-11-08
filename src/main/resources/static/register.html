@@ -382,34 +382,44 @@
     const form = document.getElementById('studentForm');
     const submitBtn = form.querySelector('button[type="submit"]');
 
-    form.addEventListener('submit', async (e)=>{
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
         submitBtn.disabled = true;
         const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;">
-            <div style="border:3px solid #fff;border-top:3px solid transparent;border-radius:50%;width:16px;height:16px;animation:spin 1s linear infinite;"></div>
-            Yüklənir...
-        </span>`;
+
+        submitBtn.innerHTML = `
+            <span style="display:inline-flex;align-items:center;gap:8px;">
+                <div style="border:3px solid #fff;border-top:3px solid transparent;border-radius:50%;width:16px;height:16px;animation:spin 1s linear infinite;"></div>
+                Yüklənir...
+            </span>`;
 
         const formData = Object.fromEntries(new FormData(e.target).entries());
         formData.bspStudent = document.getElementById('bspStudent').checked;
         formData.examId = parseInt(formData.examId);
-        formData.examTime = document.getElementById('examTime').value; // ✅ Bu sətri əlavə et
-
+        formData.examTime = document.getElementById('examTime').value;
 
         const resultDiv = document.getElementById('result');
         const cardContainer = document.getElementById('cardContainer');
 
-        try{
+        try {
             const res = await fetch('/api/students/add', {
-                method:'POST',
-                headers:{'Content-Type':'application/json'},
-                body:JSON.stringify(formData)
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
             });
-            if(!res.ok) throw new Error(await res.text());
-            const student = await res.json();
 
-            // Kart məlumatları
+            // Cavabı JSON kimi oxuyuruq
+            const data = await res.json();
+
+            if (!res.ok) {
+                // Xəta mesajını düzgün çıxarırıq
+                const errorMessage = data.message || "Gözlənilməz xəta baş verdi!";
+                throw new Error(errorMessage);
+            }
+
+            const student = data;
+
+            // ✅ Kart məlumatları
             document.getElementById('cardExamTime').innerText = formData.examTime;
             document.getElementById('cardName').innerText = `${student.name} ${student.surname} ${student.fatherName}`;
             document.getElementById('cardGrade').innerText = student.grade;
@@ -422,12 +432,15 @@
 
             const now = new Date();
             document.getElementById('cardDate').innerText = now.toLocaleDateString();
-            document.getElementById('cardTime').innerText = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+            document.getElementById('cardTime').innerText = now.toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
 
             cardContainer.style.display = 'block';
             resultDiv.className = "success";
             resultDiv.innerText = "Şagird uğurla qeydiyyatdan keçdi!";
-        } catch(err){
+        } catch (err) {
             resultDiv.className = "error";
             resultDiv.innerText = err.message;
             cardContainer.style.display = 'none';

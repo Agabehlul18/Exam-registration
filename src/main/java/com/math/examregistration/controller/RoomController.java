@@ -3,9 +3,11 @@ package com.math.examregistration.controller;
 import com.math.examregistration.entity.Room;
 import com.math.examregistration.service.RoomService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,10 +34,10 @@ public class RoomController {
     @PostMapping
     public ResponseEntity<Map<String, Object>> addRoom(@RequestBody Room room) {
         Room savedRoom = roomService.addRoom(room);
-        return ResponseEntity.ok(Map.of(
-                "message", "Otaq uğurla əlavə olundu ✅",
-                "room", savedRoom
-        ));
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Otaq uğurla əlavə olundu ✅");
+        response.put("room", savedRoom);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
@@ -44,10 +46,10 @@ public class RoomController {
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Object>> updateRoom(@PathVariable Long id, @RequestBody Room room) {
         Room updatedRoom = roomService.updateRoom(id, room);
-        return ResponseEntity.ok(Map.of(
-                "message", "Otaq məlumatları uğurla yeniləndi ✏️",
-                "room", updatedRoom
-        ));
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Otaq məlumatları uğurla yeniləndi ✏️");
+        response.put("room", updatedRoom);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -56,10 +58,10 @@ public class RoomController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> deleteRoom(@PathVariable Long id) {
         roomService.deleteRoom(id);
-        return ResponseEntity.ok(Map.of(
-                "message", "Otaq uğurla silindi 🗑️",
-                "deletedRoomId", id
-        ));
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Otaq uğurla silindi 🗑️");
+        response.put("deletedRoomId", id);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -68,21 +70,28 @@ public class RoomController {
     @GetMapping("/{id}/remaining")
     public ResponseEntity<Map<String, Object>> getRemainingSeats(@PathVariable Long id) {
         int remaining = roomService.getRemainingSeats(id);
-        return ResponseEntity.ok(Map.of(
-                "roomId", id,
-                "remainingSeats", remaining,
-                "status", remaining > 0 ? "mövcuddur ✅" : "dolu ❌"
-        ));
+        Map<String, Object> response = new HashMap<>();
+        response.put("roomId", id);
+        response.put("remainingSeats", remaining);
+        response.put("status", remaining > 0 ? "mövcuddur ✅" : "dolu ❌");
+        return ResponseEntity.ok(response);
     }
 
+    /**
+     * 🔹 Ümumi tutum
+     */
     @GetMapping("/total-capacity")
-    public int getTotalCapacity() {
-        return roomService.getTotalCapacity();
+    public ResponseEntity<Map<String, Object>> getTotalCapacity() {
+        int total = roomService.getTotalCapacity();
+        return ResponseEntity.ok(Map.of("totalCapacity", total));
     }
 
+    /**
+     * 🔹 Ümumi doluluq
+     */
     @GetMapping("/total-current")
-    public int getTotalCurrentCount() {
-        return roomService.getTotalCurrentCount();
+    public ResponseEntity<Map<String, Object>> getTotalCurrentCount() {
+        int total = roomService.getTotalCurrentCount();
+        return ResponseEntity.ok(Map.of("totalCurrentCount", total));
     }
-
 }

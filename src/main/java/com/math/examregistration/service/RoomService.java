@@ -1,12 +1,14 @@
 package com.math.examregistration.service;
 
 import com.math.examregistration.entity.Room;
+import com.math.examregistration.exception.BadRequestException;
+import com.math.examregistration.exception.ConflictException;
+import com.math.examregistration.exception.NotFoundException;
 import com.math.examregistration.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Service
@@ -20,47 +22,41 @@ public class RoomService {
         String prefix = examTime.startsWith("10") ? "A" : "B";
         log.info("Vaxta görə otaq axtarılır: {} -> prefix: {}", examTime, prefix);
 
-        // Prefiksə uyğun otaqları id artan sırada götür
         List<Room> rooms = roomRepository.findByRoomNoStartingWithOrderByIdAsc(prefix);
 
         for (Room room : rooms) {
             if (room.getCurrentCount() < room.getCapacity()) {
-                return room; // dolu olmayan ilk otaq
+                return room;
             }
         }
 
-        throw new RuntimeException(prefix + " ilə başlayan boş otaq yoxdur!");
+        throw new NotFoundException(examTime + " saatına boş otaq yoxdur!");
     }
 
-
-    // 🔹 Sadə boş otaq tapmaq
     public Room assignAvailableRoom() {
         return roomRepository.findAvailableRoom()
-                .orElseThrow(() -> new RuntimeException("Boş otaq yoxdur!"));
+                .orElseThrow(() -> new NotFoundException("Boş otaq yoxdur!"));
     }
 
-    // 🔹 Otaq doluluğunu artır
     @Transactional
     public void incrementRoomCount(Room room) {
         if (room.getCurrentCount() >= room.getCapacity()) {
-            throw new RuntimeException("Otaq artıq doludur!");
+            throw new ConflictException("Otaq artıq doludur!");
         }
         room.setCurrentCount(room.getCurrentCount() + 1);
         roomRepository.save(room);
         log.info("Otaq #{} üçün say artırıldı → cari say: {}", room.getRoomNo(), room.getCurrentCount());
     }
 
-    // 🔹 Bütün otaqları gətir
     public List<Room> getAllRooms() {
         List<Room> rooms = roomRepository.findAll();
         log.info("Sistemdə {} otaq tapıldı", rooms.size());
         return rooms;
     }
 
-    // 🔹 Yeni otaq əlavə et
     public Room addRoom(Room room) {
         if (room.getCapacity() <= 0) {
-            throw new IllegalArgumentException("Otağın tutumu 0-dan böyük olmalıdır!");
+            throw new BadRequestException("Otağın tutumu 0-dan böyük olmalıdır!");
         }
         room.setCurrentCount(0);
         Room saved = roomRepository.save(room);
@@ -68,14 +64,13 @@ public class RoomService {
         return saved;
     }
 
-    // 🔹 Otaq məlumatını yenilə
     @Transactional
     public Room updateRoom(Long id, Room updatedRoom) {
         Room existingRoom = roomRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Otaq tapılmadı!"));
+                .orElseThrow(() -> new NotFoundException("Otaq tapılmadı!"));
 
         if (updatedRoom.getCapacity() < existingRoom.getCurrentCount()) {
-            throw new IllegalArgumentException("Yeni tutum mövcud doluluqdan az ola bilməz!");
+            throw new BadRequestException("Yeni tutum mövcud doluluqdan az ola bilməz!");
         }
 
         existingRoom.setRoomNo(updatedRoom.getRoomNo());
@@ -86,19 +81,17 @@ public class RoomService {
         return saved;
     }
 
-    // 🔹 Otağı sil
     public void deleteRoom(Long id) {
         if (!roomRepository.existsById(id)) {
-            throw new RuntimeException("Silinəcək otaq tapılmadı!");
+            throw new NotFoundException("Silinəcək otaq tapılmadı!");
         }
         roomRepository.deleteById(id);
         log.info("Otaq #{} silindi", id);
     }
 
-    // 🔹 Qalan yerlərin sayı
     public int getRemainingSeats(Long roomId) {
         Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new RuntimeException("Otaq tapılmadı!"));
+                .orElseThrow(() -> new NotFoundException("Otaq tapılmadı!"));
         int remaining = room.getCapacity() - room.getCurrentCount();
         log.info("Otaq #{} üçün qalan yerlər: {}", room.getRoomNo(), remaining);
         return remaining;
@@ -115,5 +108,4 @@ public class RoomService {
         log.info("Bütün otaqlarda hal-hazırda olan tələbələrin ümumi sayı: {}", total);
         return total;
     }
-
 }
