@@ -4,6 +4,7 @@ import com.math.examregistration.entity.Exam;
 import com.math.examregistration.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,5 +34,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     Object getPaymentStatistics();
 
 
+    @Query("SELECT s.seatNo FROM Student s WHERE s.room.id = :roomId")
+    List<Integer> findSeatNosByRoomId(@Param("roomId") Long roomId);
 
 }

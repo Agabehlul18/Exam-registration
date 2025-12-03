@@ -295,6 +295,7 @@
             <option value="9">9</option>
             <option value="10">10</option>
             <option value="11">11</option>
+            <option value="12">12</option>
         </select><br><br>
         <input type="text" name="phone" placeholder="Telefon nömrəsi" required><br><br>
         <label for="studentType" style="font-size:15px;">Qrup seçin:</label><br>
@@ -309,15 +310,15 @@
         <label for="examTime" style="font-size:15px;">İmtahan vaxtı:</label><br>
         <select id="examTime" name="examTime" required>
             <option value="">Saat seçin</option>
-            <option value="10:00">10:00</option>
-            <option value="17:00">17:00</option>
-        </select><br><br>
+            <option value="10:00" selected>10:00</option>
 
+        </select><br><br>
 
         <select name="examId" required>
             <option value="">İmtahan seçin</option>
-            <option value="4">Riyaziyyat 0-dan 100-ə</option>
+            <option value="5" selected>Riyaziyyat mükafatlı yarış</option>
         </select><br><br>
+
 
         <div style="display:flex;align-items:center;gap:10px;">
             <input
@@ -337,7 +338,7 @@
         <div class="card-header">
             <img src="mathbsp-az-qr-code.png" alt="QR Kod" style="width:80px;height:80px;">
             <div style="text-align:right;">
-                <h1>Riyaziyyat 0-dan 100-ə</h1>
+                <h1>Riyaziyyat mükafatlı yarış</h1>
                 <p><span id="cardDate"></span> | <span id="cardTime"></span></p>
             </div>
         </div>
@@ -548,7 +549,7 @@
         <div class="left">
           <div class="left-header">
             <div>
-         <h2 style="color: #004815;">Riyaziyyat 0-dan 100-ə</h2>
+         <h2 style="color: #004815;">Riyaziyyat mükafatlı yarış</h2>
 
             </div>
           </div>
@@ -559,7 +560,7 @@
             <p><strong>Otaq:</strong> ${document.getElementById('cardRoom').textContent} </p>
             <p><strong>Yer:</strong> ${document.getElementById('cardSeat').textContent}</p>
             <p><strong>BSP LearnUp tələbəsidir:</strong> ${document.getElementById('cardBsp').textContent}</p>
-            <p><strong>Tarix:</strong> 09.11.2025</p>
+            <p><strong>Tarix:</strong> 21.12.2025</p>
             <p><strong>Saat:</strong> ${document.getElementById('cardExamTime').textContent}</p>
             <p><strong>Ünvan:</strong> Bakıxanov qəs., Villa Plaza</p>
             <p>Biletin satış tarixi: ${document.getElementById('cardDate').textContent} | ${document.getElementById('cardTime').textContent}</p>
