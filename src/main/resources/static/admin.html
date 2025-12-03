@@ -573,8 +573,8 @@
       <!-- Yeni əlavə olunanlar -->
       <div class="stat-card">
         <div class="stat-icon">🅂</div>
-        <div class="stat-label">S qrupu</div>
-        <div class="stat-value" id="sGroupCount">0</div>
+        <div class="stat-label">1-ci kurs </div>
+        <div class="stat-value" id="grade12">0</div>
         <div class="stat-change">Tələbə sayı</div>
       </div>
 
@@ -687,19 +687,26 @@
           const totalCapacity = await fetch(`${baseUrl1}/total-capacity`).then(r => r.json());
           const totalCurrent = await fetch(`${baseUrl1}/total-current`).then(r => r.json());
 
-          const percent = totalCapacity === 0 ? 0 : ((totalCurrent / totalCapacity) * 100).toFixed(1);
+          console.log("totalCapacity:", totalCapacity);
+          console.log("totalCurrent:", totalCurrent);
+
+          const capacity = typeof totalCapacity === "object" ? Object.values(totalCapacity)[0] : totalCapacity;
+          const current = typeof totalCurrent === "object" ? Object.values(totalCurrent)[0] : totalCurrent;
+
+          const percent = capacity === 0 ? 0 : ((current / capacity) * 100).toFixed(1);
 
           const fill = document.getElementById('roomFill');
           fill.style.width = percent + '%';
           fill.setAttribute('aria-valuenow', percent);
 
           document.getElementById('roomText').innerText =
-                  `${percent}% dolu (${totalCurrent}/${totalCapacity})`;
+                  `${percent}% dolu (${current}/${capacity})`;
         } catch (err) {
           console.error("API çağırışı zamanı xəta baş verdi:", err);
           document.getElementById('roomText').innerText = "Xəta baş verdi!";
         }
       }
+
 
       loadRoomStats();
     </script>
@@ -791,6 +798,7 @@
       document.getElementById("grade9").textContent = data.grade9 || 0;
       document.getElementById("grade10").textContent = data.grade10 || 0;
       document.getElementById("grade11").textContent = data.grade11 || 0;
+      document.getElementById("grade12").textContent = data.grade12 || 0;
       document.getElementById("totalPayment").textContent = (data.totalPayment || 0).toFixed(2);
     } catch (error) {
       console.error("Statistika yüklənərkən xəta:", error);
@@ -822,7 +830,6 @@
       const data = await res.json();
 
       // S qrupu / BSP / Kənar saylarını yeniləyirik
-      document.getElementById('sGroupCount').textContent = data.sGroupCount || 0;
       document.getElementById('bspCount').textContent = data.bspCount || 0;
       document.getElementById('externalCount').textContent = data.externalCount || 0;
     } catch (error) {

@@ -6,7 +6,7 @@
     <title>Şagird Qeydiyyatı</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* 🌿 Reset və əsas struktur */
+        /* 🔄 Reset & Base */
         * {
             margin: 0;
             padding: 0;
@@ -15,52 +15,50 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: radial-gradient(circle at top left, #bbf7d0, #ecfdf5, #ffffff);
+            background: radial-gradient(circle at 20% 20%, #83f1a7, #ffffff, #6bf6ab);
             min-height: 100vh;
+            padding-top: 90px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-top: 90px;
-            overflow-x: hidden;
-            color: #1a1a1a;
-            transition: background 0.5s ease;
+            transition: 0.5s ease;
+            color: #0f172a;
         }
 
-        /* 🔹 Header */
+        /* 🔥 Modern Sticky Header */
         header {
-            background: linear-gradient(90deg, #16a34a, #059669, #0d9488);
-            color: #fff;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            padding: 16px 48px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 50px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
+            background: rgba(22,163,74,0.85);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 12px 40px rgba(22,163,74,0.28);
             z-index: 1000;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            border-bottom: 1px solid rgba(255,255,255,0.15);
-            animation: slideDown 0.6s ease;
+            animation: fadeDown .5s ease;
         }
 
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-30px); }
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-25px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         header h1 {
-            font-size: 1.8rem;
+            font-size: 1.7rem;
             font-weight: 700;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #ffffff, #e0ffe8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         nav {
             display: flex;
-            gap: 25px;
+            gap: 22px;
         }
 
         nav a {
@@ -69,12 +67,12 @@
             font-weight: 500;
             padding: 8px 18px;
             border-radius: 12px;
-            transition: all 0.3s ease;
+            transition: 0.25s ease;
         }
 
         nav a:hover {
-            background: rgba(255,255,255,0.2);
-            transform: translateY(-3px);
+            background: rgba(255,255,255,0.18);
+            transform: translateY(-2px);
         }
 
         nav a.active {
@@ -82,128 +80,127 @@
             font-weight: 600;
         }
 
-        @media (max-width: 768px) {
-            header { flex-direction: column; align-items: flex-start; padding: 20px 30px; }
-            nav { flex-wrap: wrap; gap: 10px; margin-top: 12px; }
-        }
-
-        /* 🧩 Form və kart konteynerləri */
-        .form-container, .card-container {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(18px);
-            border: 1px solid rgba(255,255,255,0.4);
-            padding: 40px;
-            border-radius: 24px;
-            box-shadow: 0 20px 70px rgba(0,0,0,0.15);
+        /* 📦 Modern Card + Form Container */
+        .form-container,
+        .card-container {
             width: 100%;
             max-width: 520px;
+            padding: 34px;
             margin-bottom: 40px;
-            transition: all 0.4s ease;
+            border-radius: 22px;
+            background: rgba(255,255,255,0.72);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.45);
+            box-shadow:
+                    0 8px 22px rgba(0,0,0,0.05),
+                    0 20px 60px rgba(0,0,0,0.12);
+            transition: 0.35s ease;
         }
 
-        .form-container:hover, .card-container:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 35px 90px rgba(0,0,0,0.25);
+        .form-container:hover,
+        .card-container:hover {
+            transform: translateY(-6px);
+            box-shadow:
+                    0 20px 60px rgba(0,0,0,0.15),
+                    0 30px 80px rgba(0,0,0,0.12);
         }
 
         h2 {
             text-align: center;
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 35px;
-            background: linear-gradient(135deg, #16a34a, #0d9488);
+            font-size: 26px;
+            margin-bottom: 28px;
+            background: linear-gradient(135deg, #16a34a, #0f766e);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        /* 🔸 Input və Select */
-        input, select {
+        /* 🧊 Smooth Inputs */
+        input,
+        select {
             width: 100%;
             padding: 14px 16px;
-            border: 2px solid #d1fae5;
-            border-radius: 14px;
             font-size: 15px;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.3s ease;
-            background: rgba(255,255,255,0.95);
-            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+            border-radius: 14px;
+            border: 1px solid rgba(34,197,94,0.25);
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+            transition: 0.25s ease;
         }
 
-        input:focus, select:focus {
+        input:focus,
+        select:focus {
             border-color: #16a34a;
+            box-shadow: 0 0 6px rgba(34,197,94,0.3);
             outline: none;
-            box-shadow: 0 0 0 5px rgba(34,197,94,0.2);
-            transform: translateY(-2px);
         }
 
-        /* ✅ Button */
+        /* 🟢 Primary Button */
         button {
             width: 100%;
             padding: 14px;
             margin-top: 12px;
-            background: linear-gradient(135deg, #22c55e, #059669);
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
+            background: linear-gradient(135deg, #22c55e, #0d9488);
             border: none;
             border-radius: 14px;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 22px rgba(34,197,94,0.35);
+            transition: 0.28s ease;
+            box-shadow: 0 6px 20px rgba(34, 255, 114, 0.35);
         }
 
         button:hover {
-            transform: translateY(-3px) scale(1.03);
-            box-shadow: 0 12px 30px rgba(16,185,129,0.55);
-            filter: brightness(1.1);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 28px rgb(0, 255, 75);
         }
 
-        /* 📊 Result Mesajları */
+        /* 🔔 Result Messages */
         #result {
-            margin-top: 20px;
+            margin-top: 18px;
             padding: 14px;
-            border-radius: 12px;
-            font-weight: 500;
+            border-radius: 14px;
             text-align: center;
-            animation: fadeIn 0.4s ease;
+            font-weight: 500;
+            animation: fadeIn .3s ease;
         }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         #result.success {
-            background: #dcfce7;
-            color: #065f46;
+            background: #d1fae5;
             border: 1px solid #86efac;
+            color: #007120;
         }
 
         #result.error {
             background: #fee2e2;
-            color: #991b1b;
             border: 1px solid #fecaca;
+            color: #991b1b;
         }
 
-        /* 🪶 Kart Dizaynı */
+        /* 📊 Card styles */
         .card {
-            border-radius: 18px;
             padding: 26px;
-            background: rgba(255,255,255,0.92);
-            border: 2px solid rgba(34,197,94,0.3);
-            box-shadow: 0 25px 80px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.85);
+            border: 1px solid rgba(128, 255, 174, 0.25);
+            box-shadow: 0 18px 50px rgba(0,0,0,0.08);
+            transition: 0.3s ease;
         }
 
         .card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 35px 100px rgba(0,0,0,0.15);
+            box-shadow: 0 26px 70px rgba(0,0,0,0.12);
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .card-header h1 {
@@ -211,33 +208,21 @@
             background: linear-gradient(135deg, #22c55e, #0d9488);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin: 0;
-            font-weight: 700;
-        }
-
-        .card-header p {
-            font-size: 13px;
-            color: #555;
-            margin: 0;
         }
 
         .card p {
-            margin: 8px 0;
-            font-size: 15px;
-            color: #374151;
             display: flex;
             justify-content: space-between;
-        }
-
-        .card p strong {
-            color: #111827;
+            padding: 6px 0;
+            font-size: 15px;
+            color: #374151;
         }
 
         /* 🔘 Button Group */
         .btn-group {
             display: flex;
             gap: 12px;
-            margin-top: 20px;
+            margin-top: 18px;
         }
 
         .btn-group button {
@@ -245,29 +230,27 @@
             padding: 12px;
             border-radius: 12px;
             font-weight: 600;
-            font-size: 15px;
             border: none;
             cursor: pointer;
             color: white;
-            background: linear-gradient(135deg, #16a34a, #0d9488);
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 18px rgba(16,185,129,0.35);
+            background: linear-gradient(135deg, #00f158, #d15517);
+            transition: 0.28s ease;
+        }
+
+        .btn-group button:nth-child(2) {
+            background: linear-gradient(135deg, #0ea5e9, #0369a1);
         }
 
         .btn-group button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(22,163,74,0.45);
         }
 
-        .btn-group button:nth-child(2) {
-            background: linear-gradient(135deg, #0ea5e9, #0284c7);
-        }
-
-        /* 🌟 Spin animasiya */
+        /* 🌪 Spin Animation */
         @keyframes spin {
-            0% { transform: rotate(0deg); }
+            0% { transform: rotate(0); }
             100% { transform: rotate(360deg); }
         }
+
 
     </style>
 </head>

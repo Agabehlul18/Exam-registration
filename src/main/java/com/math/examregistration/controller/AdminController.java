@@ -30,6 +30,7 @@ public class AdminController {
         long grade9 = studentService.countByGrade(9);
         long grade10 = studentService.countByGrade(10);
         long grade11 = studentService.countByGrade(11);
+        long grade12 = studentService.countByGrade(12);
         Double totalPayment = studentService.getTotalPayment();
 
         Map<String, Object> stats = new HashMap<>();
@@ -37,6 +38,7 @@ public class AdminController {
         stats.put("grade9", grade9);
         stats.put("grade10", grade10);
         stats.put("grade11", grade11);
+        stats.put("grade12", grade12);
         stats.put("totalPayment", totalPayment != null ? totalPayment : 0.0);
 
         return stats;

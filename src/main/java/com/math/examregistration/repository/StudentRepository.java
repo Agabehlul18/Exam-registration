@@ -25,9 +25,8 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     @Query("""
         SELECT 
-            SUM(CASE WHEN s.paymentAmount = 0 THEN 1 ELSE 0 END) AS sGroupCount,
-            SUM(CASE WHEN s.paymentAmount = 5 THEN 1 ELSE 0 END) AS bspCount,
-            SUM(CASE WHEN s.paymentAmount = 7 THEN 1 ELSE 0 END) AS externalCount,
+            SUM(CASE WHEN s.paymentAmount = 2 THEN 1 ELSE 0 END) AS bspCount,
+            SUM(CASE WHEN s.paymentAmount = 10 THEN 1 ELSE 0 END) AS externalCount,
             SUM(s.paymentAmount) AS totalPayment
         FROM Student s
     """)

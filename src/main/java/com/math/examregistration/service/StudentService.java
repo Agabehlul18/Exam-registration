@@ -122,10 +122,10 @@ public class StudentService {
     public Map<String, Object> getPaymentStatistics() {
         Object[] stats = (Object[]) studentRepository.getPaymentStatistics();
         Map<String, Object> result = new HashMap<>();
-        result.put("sGroupCount", stats[0]);
-        result.put("bspCount", stats[1]);
-        result.put("externalCount", stats[2]);
-        result.put("totalPayment", stats[3]);
+
+        result.put("bspCount", stats[0]);
+        result.put("externalCount", stats[1]);
+        result.put("totalPayment", stats[2]);
         return result;
     }
 
