@@ -24,14 +24,38 @@ public class RoomService {
 
         List<Room> rooms = roomRepository.findByRoomNoStartingWithOrderByIdAsc(prefix);
 
+        if (rooms.isEmpty()) {
+            throw new NotFoundException("Bu vaxta uyğun otaq tapılmadı!");
+        }
+
+        // 🔹 Max capacity-ni tap (bütün otaqlar eyni deyil deyə təhlükəsizdir)
+        int maxCapacity = rooms.stream()
+                .mapToInt(Room::getCapacity)
+                .max()
+                .orElse(0);
+
+        // 🔥 1) Hər bir seatNo üzrə otaqları yoxla
+        for (int seatNo = 1; seatNo <= maxCapacity; seatNo++) {
+            for (Room room : rooms) {
+                // Bu otağın cari sayına görə seatNo uyğun gəlirsə deməli boşdur
+                if (room.getCurrentCount() + 1 == seatNo) {
+                    log.info("Təyin edilmiş otaq: {}, seat {}", room.getRoomNo(), seatNo);
+                    return room;
+                }
+            }
+        }
+
+        // 🔥 2) Əgər bu məntiq ödənmirsə — harda boş yer varsa ora
         for (Room room : rooms) {
             if (room.getCurrentCount() < room.getCapacity()) {
+                log.info("Fallback otaq: {} (seat {})", room.getRoomNo(), room.getCurrentCount() + 1);
                 return room;
             }
         }
 
-        throw new NotFoundException(examTime + " saatına boş otaq yoxdur!");
+        throw new NotFoundException("Heç bir otaqda boş yer yoxdur!");
     }
+
 
     public Room assignAvailableRoom() {
         return roomRepository.findAvailableRoom()
