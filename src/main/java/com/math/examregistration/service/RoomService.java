@@ -5,11 +5,17 @@ import com.math.examregistration.exception.BadRequestException;
 import com.math.examregistration.exception.ConflictException;
 import com.math.examregistration.exception.NotFoundException;
 import com.math.examregistration.repository.RoomRepository;
+import com.math.examregistration.repository.StudentRepository;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -17,49 +23,56 @@ import java.util.List;
 public class RoomService {
 
     private final RoomRepository roomRepository;
+    private final StudentRepository studentRepository;
 
+    // 11:30 qrupları
+    public enum SlotGroup { MATH9, PHYSICS }
+
+    @Data
+    @AllArgsConstructor
+    public static class RoomAssignment {
+        private Room room;
+        private int seatNo;
+    }
+
+    // ---------------------------------------------------------
+    // ✅ Controller üçün lazımdır (səndə "cannot find getAllRooms" xətası)
+    // ---------------------------------------------------------
+    public List<Room> getAllRooms() {
+        return roomRepository.findAll();
+    }
+
+    // ---------------------------------------------------------
+    // ✅ 10:00 (A otaqları) — əvvəlki qayda:
+    // hər otağın 1-ci yeri, sonra hər otağın 2-ci yeri...
+    // ---------------------------------------------------------
     public Room assignAvailableRoomByTime(String examTime) {
         String prefix = examTime.startsWith("10") ? "A" : "B";
-        log.info("Vaxta görə otaq axtarılır: {} -> prefix: {}", examTime, prefix);
-
-        List<Room> rooms = roomRepository.findByRoomNoStartingWithOrderByIdAsc(prefix);
+        List<Room> rooms = roomRepository.findRoomsByPrefixOrderByIdAsc(prefix);
 
         if (rooms.isEmpty()) {
             throw new NotFoundException("Bu vaxta uyğun otaq tapılmadı!");
         }
 
-        // 🔹 Max capacity-ni tap (bütün otaqlar eyni deyil deyə təhlükəsizdir)
-        int maxCapacity = rooms.stream()
-                .mapToInt(Room::getCapacity)
-                .max()
-                .orElse(0);
+        int maxCapacity = rooms.stream().mapToInt(Room::getCapacity).max().orElse(0);
 
-        // 🔥 1) Hər bir seatNo üzrə otaqları yoxla
         for (int seatNo = 1; seatNo <= maxCapacity; seatNo++) {
             for (Room room : rooms) {
-                // Bu otağın cari sayına görə seatNo uyğun gəlirsə deməli boşdur
-                if (room.getCurrentCount() + 1 == seatNo) {
-                    log.info("Təyin edilmiş otaq: {}, seat {}", room.getRoomNo(), seatNo);
-                    return room;
+                if (seatNo <= room.getCapacity() && room.getCurrentCount() < room.getCapacity()) {
+                    if (room.getCurrentCount() + 1 == seatNo) {
+                        return room;
+                    }
                 }
             }
         }
 
-        // 🔥 2) Əgər bu məntiq ödənmirsə — harda boş yer varsa ora
         for (Room room : rooms) {
             if (room.getCurrentCount() < room.getCapacity()) {
-                log.info("Fallback otaq: {} (seat {})", room.getRoomNo(), room.getCurrentCount() + 1);
                 return room;
             }
         }
 
         throw new NotFoundException("Heç bir otaqda boş yer yoxdur!");
-    }
-
-
-    public Room assignAvailableRoom() {
-        return roomRepository.findAvailableRoom()
-                .orElseThrow(() -> new NotFoundException("Boş otaq yoxdur!"));
     }
 
     @Transactional
@@ -69,67 +82,124 @@ public class RoomService {
         }
         room.setCurrentCount(room.getCurrentCount() + 1);
         roomRepository.save(room);
-        log.info("Otaq #{} üçün say artırıldı → cari say: {}", room.getRoomNo(), room.getCurrentCount());
     }
 
-    public List<Room> getAllRooms() {
-        List<Room> rooms = roomRepository.findAll();
-        log.info("Sistemdə {} otaq tapıldı", rooms.size());
-        return rooms;
+    // ---------------------------------------------------------
+    // ✅✅✅ 11:30 (B otaqları) — SƏNİN QAYDA:
+    // Fizika -> tək yerlər (1,3,5..)
+    // Riyaziyyat 9 -> cüt yerlər (2,4,6..)
+    // Əgər öz parity-si bitdisə -> qarşı parity-yə düşür (yanaşı)
+    //
+    // ÜSTÜNLÜK: A kimi “seatNo üzrə scan” edir:
+    // əvvəl bütün otaqlarda seat 1 (fizika üçün), sonra seat 3..., sonra fallback
+    // ---------------------------------------------------------
+    @Transactional
+    public RoomAssignment assignRoomFor1130Parity(SlotGroup group) {
+        final String examTime = "11:30";
+
+        // lock: eyni anda qeydiyyatlarda qarışıqlıq olmasın
+        List<Room> rooms = roomRepository.findRoomsByPrefixOrderByIdAscForUpdate("B");
+
+        if (rooms.isEmpty()) {
+            throw new NotFoundException("11:30 üçün (B*) otaq tapılmadı!");
+        }
+
+        int maxCapacity = rooms.stream().mapToInt(Room::getCapacity).max().orElse(0);
+
+        // 1) əvvəl preferred parity yerləri
+        int startPreferred = (group == SlotGroup.PHYSICS) ? 1 : 2;
+        RoomAssignment preferred = findBySeatScan(rooms, maxCapacity, startPreferred, 2, examTime);
+        if (preferred != null) return preferred;
+
+        // 2) preferred bitdisə -> opposite parity (yanaşı ola bilər)
+        int startOpposite = (group == SlotGroup.PHYSICS) ? 2 : 1;
+        RoomAssignment opposite = findBySeatScan(rooms, maxCapacity, startOpposite, 2, examTime);
+        if (opposite != null) return opposite;
+
+        // 3) ümumiyyətlə boş yer axtar (hər ehtimala)
+        RoomAssignment any = findBySeatScan(rooms, maxCapacity, 1, 1, examTime);
+        if (any != null) return any;
+
+        throw new NotFoundException("11:30 üçün boş yer yoxdur!");
     }
 
+    /**
+     * Seat scan helper:
+     * seatNo = start; seatNo += step
+     * hər seatNo üçün otaqları id sırasıyla gəzib boş olanı tapır.
+     */
+    private RoomAssignment findBySeatScan(List<Room> rooms, int maxCapacity, int start, int step, String examTime) {
+        for (int seatNo = start; seatNo <= maxCapacity; seatNo += step) {
+            for (Room room : rooms) {
+                if (seatNo > room.getCapacity()) continue;
+                if (room.getBCurrentCount() >= room.getCapacity()) continue;
+
+                // həmin otaqda həmin examTime üçün dolu yerlər
+                Set<Integer> occupied = getOccupiedSeats(room.getId(), examTime);
+
+                if (!occupied.contains(seatNo)) {
+                    log.info("11:30 seat seçildi -> group={}, room={}, seat={}",
+                            examTime, room.getRoomNo(), seatNo);
+                    return new RoomAssignment(room, seatNo);
+                }
+            }
+        }
+        return null;
+    }
+
+    private Set<Integer> getOccupiedSeats(Long roomId, String examTime) {
+        List<Integer> seats = studentRepository.findSeatNosByRoomAndTime(roomId, examTime);
+        return new HashSet<>(seats);
+    }
+
+    // 11:30 üçün count artırma
+    @Transactional
+    public void incrementRoomCountFor1130(Room room, SlotGroup group) {
+        if (room.getBCurrentCount() >= room.getCapacity()) {
+            throw new ConflictException("Otaq artıq doludur!");
+        }
+        room.setBCurrentCount(room.getBCurrentCount() + 1);
+        room.setBLastGroup(group.name());
+        roomRepository.save(room);
+    }
+
+    // ---------------------------------------------------------
+    // ✅ CRUD / Statistik
+    // ---------------------------------------------------------
     public Room addRoom(Room room) {
         if (room.getCapacity() <= 0) {
             throw new BadRequestException("Otağın tutumu 0-dan böyük olmalıdır!");
         }
+
+        // A
         room.setCurrentCount(0);
-        Room saved = roomRepository.save(room);
-        log.info("Yeni otaq əlavə edildi: #{} (Tutum: {})", saved.getRoomNo(), saved.getCapacity());
-        return saved;
-    }
+        // B
+        room.setBCurrentCount(0);
+        room.setBLastGroup(null);
 
-    @Transactional
-    public Room updateRoom(Long id, Room updatedRoom) {
-        Room existingRoom = roomRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Otaq tapılmadı!"));
-
-        if (updatedRoom.getCapacity() < existingRoom.getCurrentCount()) {
-            throw new BadRequestException("Yeni tutum mövcud doluluqdan az ola bilməz!");
-        }
-
-        existingRoom.setRoomNo(updatedRoom.getRoomNo());
-        existingRoom.setCapacity(updatedRoom.getCapacity());
-
-        Room saved = roomRepository.save(existingRoom);
-        log.info("Otaq #{} məlumatları yeniləndi", saved.getRoomNo());
-        return saved;
-    }
-
-    public void deleteRoom(Long id) {
-        if (!roomRepository.existsById(id)) {
-            throw new NotFoundException("Silinəcək otaq tapılmadı!");
-        }
-        roomRepository.deleteById(id);
-        log.info("Otaq #{} silindi", id);
+        return roomRepository.save(room);
     }
 
     public int getRemainingSeats(Long roomId) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new NotFoundException("Otaq tapılmadı!"));
-        int remaining = room.getCapacity() - room.getCurrentCount();
-        log.info("Otaq #{} üçün qalan yerlər: {}", room.getRoomNo(), remaining);
-        return remaining;
+
+        // hansı prefixdirsə ona görə qalıq:
+        boolean isA = room.getRoomNo() != null && room.getRoomNo().startsWith("A");
+        int used = isA ? room.getCurrentCount() : room.getBCurrentCount();
+
+        return room.getCapacity() - used;
     }
 
     public int getTotalCapacity() {
-        int total = roomRepository.getTotalCapacity();
-        log.info("Bütün otaqların ümumi tutumu: {}", total);
-        return total;
+        return roomRepository.getTotalCapacity();
     }
 
     public int getTotalCurrentCount() {
-        int total = roomRepository.getTotalCurrentCount();
-        log.info("Bütün otaqlarda hal-hazırda olan tələbələrin ümumi sayı: {}", total);
-        return total;
+        return roomRepository.getTotalCurrentCount();
+    }
+
+    public int getTotalBCurrentCount() {
+        return roomRepository.getTotalBCurrentCount();
     }
 }

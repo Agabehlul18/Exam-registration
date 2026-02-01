@@ -1,127 +1,337 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bütün Tələbələr & Buraxılış Vərəqəsi</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bütün Tələbələr</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f3f4f6;
-            padding: 20px;
+        :root{
+            --bg:#f3f4f6;
+            --card:#ffffff;
+            --text:#0f172a;
+            --muted:#64748b;
+
+            --green:#22c55e;
+            --green2:#2b7a46;
+
+            --border: rgba(34,197,94,.35);
+            --shadow: 0 14px 40px rgba(2,6,23,.08);
+
+            --radius: 16px;
         }
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #2b7a46;
+
+        *{ box-sizing:border-box; }
+        body{
+            margin:0;
+            font-family:'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 22px;
         }
-        .students-list {
-            max-width: 800px;
-            margin: 0 auto 40px;
-        }
-        .student-item {
-            background: #fff;
-            border: 2px solid #27ae60;
-            border-radius: 10px;
-            padding: 12px 16px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .student-item button {
-            background: linear-gradient(135deg,#42cea2,#2b7a46);
-            color: #fff;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .student-item button:hover {
-            transform: translateY(-2px);
-        }
-        .card-container {
-            max-width: 460px;
+
+        .wrap{
+            width:100%;
+            max-width: 980px;
             margin: 0 auto;
-            display: none;
+            display:grid;
+            grid-template-columns: 1.2fr .8fr;
+            gap: 16px;
+            align-items:start;
         }
-        .card {
-            border: 3px solid #27ae60;
-            border-radius: 16px;
-            padding: 24px;
-            background: linear-gradient(135deg,#f6f8fb 0%,#ffffff 100%);
+        @media (max-width: 980px){
+            .wrap{ grid-template-columns: 1fr; }
         }
-        .card h1 {
-            font-size: 14px;
-            margin-bottom: 8px;
+
+        .panel{
+            background: var(--card);
+            border: 1px solid rgba(15,23,42,.08);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow:hidden;
         }
-        .card h2 {
+
+        .panel-head{
+            padding: 16px 16px 12px;
+            border-bottom: 1px solid rgba(15,23,42,.06);
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap: 10px;
+        }
+        .panel-head h1{
+            margin:0;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -.2px;
+        }
+        .badge{
+            padding: 8px 10px;
+            border-radius: 999px;
             font-size: 12px;
-            margin-bottom: 10px;
+            font-weight: 700;
+            color: #064e3b;
+            background: rgba(34,197,94,.12);
+            border: 1px solid rgba(34,197,94,.25);
+            white-space: nowrap;
         }
-        .card p {
-            margin: 8px 0;
-            font-size: 14px;
-            display: flex;
-            justify-content: space-between;
+
+        /* Left: list */
+        .list{
+            padding: 14px 14px 16px;
         }
-        .btn-group {
-            display: flex;
-            gap: 12px;
-            margin-top: 10px;
+
+        .toolbar{
+            display:flex;
+            gap:10px;
+            margin-bottom: 12px;
+            flex-wrap:wrap;
         }
-        .btn-group button {
+        .search{
             flex: 1;
-            padding: 10px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            color: #fff;
+            min-width: 220px;
+            padding: 12px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(15,23,42,.10);
+            outline:none;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .search:focus{
+            border-color: rgba(34,197,94,.55);
+            box-shadow: 0 0 0 4px rgba(34,197,94,.14);
+        }
+
+        .students{
+            display:flex;
+            flex-direction:column;
+            gap: 10px;
+        }
+
+        .item{
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 12px 12px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap: 12px;
+            background: #fff;
+            transition: .18s ease;
+        }
+        .item:hover{
+            transform: translateY(-1px);
+            box-shadow: 0 10px 24px rgba(2,6,23,.06);
+        }
+
+        .meta{
+            display:flex;
+            flex-direction:column;
+            gap: 4px;
+            min-width: 0;
+        }
+        .meta .name{
+            font-weight: 800;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .meta .sub{
+            font-size: 12px;
+            color: var(--muted);
             font-weight: 600;
         }
-        .btn-group button:first-child {
-            background: linear-gradient(135deg, #00ee87,#2b7a46);
+
+        .btn{
+            border:none;
+            border-radius: 12px;
+            padding: 10px 12px;
+            cursor:pointer;
+            font-weight: 800;
+            font-size: 13px;
+            color: white;
+            background: linear-gradient(135deg, var(--green), var(--green2));
+            transition: .18s ease;
+            white-space: nowrap;
         }
-        .btn-group button:last-child {
-            background: #27ae60;
+        .btn:hover{ transform: translateY(-1px); }
+
+        .empty{
+            padding: 16px;
+            color: var(--muted);
+            font-weight: 700;
         }
-        .btn-group button:hover {
-            transform: translateY(-2px);
+
+        /* Right: card */
+        .card-wrap{
+            padding: 14px;
+        }
+
+        .card{
+            border: 2px solid rgba(34,197,94,.55);
+            border-radius: 16px;
+            padding: 16px;
+            background: linear-gradient(135deg, #f6f8fb 0%, #ffffff 100%);
+            display:none;
+        }
+
+        .card-top{
+            display:flex;
+            gap: 12px;
+            align-items:center;
+            margin-bottom: 10px;
+        }
+        .qr{
+            width: 78px;
+            height: 78px;
+            border-radius: 12px;
+            border: 2px solid rgba(34,197,94,.45);
+            background:#fff;
+            object-fit: cover;
+            flex: 0 0 auto;
+        }
+        .title{
+            min-width:0;
+        }
+        .title h2{
+            margin:0;
+            font-size: 14px;
+            font-weight: 900;
+            color:#064e3b;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 260px;
+        }
+        .title p{
+            margin: 4px 0 0;
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .kv{
+            margin: 8px 0;
+            display:flex;
+            justify-content:space-between;
+            gap: 12px;
+            font-size: 13px;
+            padding: 8px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(15,23,42,.06);
+            background: rgba(255,255,255,.75);
+        }
+        .kv strong{ font-weight: 800; }
+        .kv span{
+            font-weight: 800;
+            color: rgba(15,23,42,.90);
+            text-align:right;
+        }
+
+        .actions{
+            display:flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .actions .btn{
+            width: 100%;
+        }
+
+        .hint{
+            padding: 10px 12px;
+            color: var(--muted);
+            font-weight: 700;
+            font-size: 13px;
         }
     </style>
 </head>
+
 <body>
 
-<h1>Bütün Tələbələr</h1>
+<div class="wrap">
 
-<div class="students-list" id="studentsContainer">Yüklənir...</div>
+    <!-- LEFT -->
+    <section class="panel">
+        <div class="panel-head">
+            <h1>Bütün Tələbələr</h1>
+            <div class="badge" id="countBadge">0 nəfər</div>
+        </div>
 
-<!-- İmtahan Kartı -->
-<div class="card-container" id="cardContainer" style="display:none;">
-    <div class="card" id="printCard">
-        <img src="mathbsp-az-qr-code.png" alt="QR Kod" style="width:100px;height:100px;float:left;margin-right:10px;">
-        <h1>Riyaziyyat mükafatlı yarış</h1>
-        <h2><strong>Ad Soyad Ata adı:</strong> <span id="cardName"></span></h2>
-        <p><strong>İş nömrəsi:</strong> <span id="cardCode"></span></p>
-        <p><strong>Sinif:</strong> <span id="cardGrade"></span></p>
-        <p><strong>Otaq:</strong> <span id="cardRoom"></span></p>
-        <p><strong>Yer:</strong> <span id="cardSeat"></span></p>
-        <p><strong>BSP LearnUp tələbəsidir:</strong> <span id="cardBsp"></span></p>
-        <p><strong>Tarix:</strong> <span id="cardDate">21.12.2025</span></p>
-        <p><strong>Saat:</strong> <span id="cardTime"></span></p>
-        <p><strong>Ünvan:</strong> Bakıxanov qəs., Villa Plaza</p>
-    </div>
-    <div class="btn-group">
-        <button onclick="printCard()">Çap et</button>
-    </div>
+        <div class="list">
+            <div class="toolbar">
+                <input class="search" id="q" placeholder="Axtar: ad, soyad, sinif, otaq..." />
+            </div>
+
+            <div class="students" id="studentsContainer">
+                <div class="empty">Yüklənir...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RIGHT -->
+    <section class="panel">
+        <div class="panel-head">
+            <h1>Buraxılış Vərəqəsi</h1>
+            <div class="badge">Çap hazır</div>
+        </div>
+
+        <div class="card-wrap">
+            <div class="card" id="cardContainer">
+                <div class="card-top">
+                    <img class="qr" src="mathbsp-az-qr-code.png" alt="QR Kod">
+                    <div class="title">
+                        <h2 id="cardExamTitle">İmtahan</h2>
+                        <p><span id="cardDate"></span> • <span id="cardTime"></span></p>
+                    </div>
+                </div>
+
+                <div class="kv"><strong>Ad Soyad Ata adı</strong><span id="cardName"></span></div>
+                <div class="kv"><strong>İş nömrəsi</strong><span id="cardCode"></span></div>
+                <div class="kv"><strong>Sinif</strong><span id="cardGrade"></span></div>
+                <div class="kv"><strong>Otaq</strong><span id="cardRoom"></span></div>
+                <div class="kv"><strong>Yer</strong><span id="cardSeat"></span></div>
+                <div class="kv"><strong>BSP</strong><span id="cardBsp"></span></div>
+                <div class="kv"><strong>Ünvan</strong><span>Bakıxanov qəs., Villa Plaza</span></div>
+
+                <div class="actions">
+                    <button class="btn" onclick="printCard()">Çap et</button>
+                </div>
+            </div>
+
+            <div class="hint" id="emptyHint">
+                Bir tələbəyə “Buraxılış vərəqəsi” basanda burda görünəcək.
+            </div>
+        </div>
+    </section>
+
 </div>
 
 <script>
+    // ==== UTIL ====
+    function safeText(v){
+        if (v === null || v === undefined) return "";
+        return String(v);
+    }
+
+    function formatDateAZ(dateObj) {
+        const dd = String(dateObj.getDate()).padStart(2, '0');
+        const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const yyyy = dateObj.getFullYear();
+        return `${dd}.${mm}.${yyyy}`;
+    }
+
+    // ==== DATA STORE (onclick problemsiz) ====
+    const STUDENTS_MAP = new Map();
+
+    // ==== LOAD ====
     async function loadStudents() {
         const container = document.getElementById('studentsContainer');
+        const badge = document.getElementById('countBadge');
+
         try {
             const BASE_URL = window.location.hostname === "localhost"
                 ? "http://localhost:8080"
@@ -129,101 +339,181 @@
 
             const res = await fetch(`${BASE_URL}/api/students`);
             const students = await res.json();
+
             container.innerHTML = '';
-            students.forEach(student => {
-                const div = document.createElement('div');
-                div.className = 'student-item';
-                div.innerHTML = `
-                    ${student.name} ${student.surname} | Sinif: ${student.grade} | Otaq: ${student.room?.roomNo || '-'}
-                    <button onclick='showExamCard(${JSON.stringify(student)})'>Buraxılış Vərəqəsi</button>
-                `;
-                container.appendChild(div);
-            });
+            STUDENTS_MAP.clear();
+
+            if (!Array.isArray(students) || students.length === 0){
+                badge.textContent = "0 nəfər";
+                container.innerHTML = `<div class="empty">Tələbə yoxdur.</div>`;
+                return;
+            }
+
+            // map doldur
+            students.forEach(s => STUDENTS_MAP.set(String(s.id), s));
+            badge.textContent = `${students.length} nəfər`;
+
+            // render
+            renderStudents(students);
+
         } catch (err) {
-            container.innerHTML = 'Tələbələr yüklənə bilmir!';
+            container.innerHTML = `<div class="empty">Tələbələr yüklənə bilmir!</div>`;
             console.error(err);
         }
     }
 
-    function showExamCard(student) {
-        document.getElementById('cardName').innerText = `${student.name} ${student.surname} ${student.fatherName}`;
-        document.getElementById('cardGrade').innerText = student.grade;
-        document.getElementById('cardCode').innerText = student.studentCode;
-        document.getElementById('cardRoom').innerText = student.room?.roomNo || '-';
-        document.getElementById('cardSeat').innerText = student.seatNo || '1';
-        document.getElementById('cardBsp').innerHTML = student.bspStudent
-            ? "<span style='color:green;font-weight:bold;'>Bəli ✅</span>"
-            : "<span style='color:red;font-weight:bold;'>Xeyr ❌</span>";
+    function renderStudents(list){
+        const container = document.getElementById('studentsContainer');
+        container.innerHTML = '';
 
-        // Tarix və saat database-dən gələcək
-        document.getElementById('cardDate').innerText = "09.11.2025";
-        document.getElementById('cardTime').innerText = student.examTime || "—";
+        list.forEach(student => {
+            const div = document.createElement('div');
+            div.className = 'item';
 
-        document.getElementById('cardContainer').style.display = 'block';
-        document.getElementById('cardContainer').scrollIntoView({behavior: 'smooth'});
+            const roomNo = student.room?.roomNo || '-';
+            const fullName = `${safeText(student.name)} ${safeText(student.surname)}`.trim();
+
+            div.innerHTML = `
+        <div class="meta">
+          <div class="name">${fullName}</div>
+          <div class="sub">Sinif: ${safeText(student.grade)} • Otaq: ${roomNo} • Saat: ${safeText(student.examTime || "—")}</div>
+        </div>
+        <button class="btn" data-id="${student.id}">Buraxılış vərəqəsi</button>
+      `;
+
+            div.querySelector('button').addEventListener('click', (e) => {
+                const id = e.currentTarget.getAttribute('data-id');
+                const st = STUDENTS_MAP.get(String(id));
+                if (st) showExamCard(st);
+            });
+
+            container.appendChild(div);
+        });
     }
 
+    // ==== SEARCH ====
+    document.getElementById('q').addEventListener('input', (e) => {
+        const q = e.target.value.trim().toLowerCase();
+        const all = Array.from(STUDENTS_MAP.values());
+
+        const filtered = all.filter(s => {
+            const roomNo = s.room?.roomNo || '';
+            const examName =
+                s.exam?.name || s.exam?.title || s.exam?.examName || '';
+
+            const hay = [
+                s.name, s.surname, s.fatherName,
+                s.grade, s.studentCode,
+                roomNo,
+                s.examTime,
+                examName
+            ].map(safeText).join(' ').toLowerCase();
+
+            return hay.includes(q);
+        });
+
+        renderStudents(filtered);
+    });
+
+    // ==== CARD ====
+    function showExamCard(student) {
+        const examName =
+            student.exam?.name ||
+            student.exam?.title ||
+            student.exam?.examName ||
+            "İmtahan";
+
+        document.getElementById('cardExamTitle').innerText = examName;
+
+        document.getElementById('cardName').innerText =
+            `${safeText(student.name)} ${safeText(student.surname)} ${safeText(student.fatherName)}`.trim();
+
+        document.getElementById('cardGrade').innerText = safeText(student.grade);
+        document.getElementById('cardCode').innerText = safeText(student.studentCode);
+        document.getElementById('cardRoom').innerText = student.room?.roomNo || '-';
+        document.getElementById('cardSeat').innerText = safeText(student.seatNo || '1');
+
+        document.getElementById('cardBsp').innerText = student.bspStudent ? "Bəli" : "Xeyr";
+
+        // Tarix: bu gün
+        document.getElementById('cardDate').innerText = formatDateAZ(new Date());
+
+        // Saat: student.examTime
+        document.getElementById('cardTime').innerText = safeText(student.examTime || "—");
+
+        document.getElementById('emptyHint').style.display = 'none';
+        document.getElementById('cardContainer').style.display = 'block';
+    }
+
+    // ==== PRINT (əvvəlki kimi saxlanılıb, başlıq dinamik) ====
     function printCard() {
+        const examTitle = document.getElementById('cardExamTitle').textContent || "İmtahan";
+
         const name = document.getElementById('cardName').textContent;
         const code = document.getElementById('cardCode').textContent;
         const grade = document.getElementById('cardGrade').textContent;
         const room = document.getElementById('cardRoom').textContent;
         const seat = document.getElementById('cardSeat').textContent;
         const cardBsp = document.getElementById('cardBsp').textContent;
+
+        const dateText = document.getElementById('cardDate').textContent;
         const time = document.getElementById('cardTime').textContent;
 
         const printWindow = window.open('', '_blank');
         printWindow.document.write(`
-            <!DOCTYPE html>
-            <html lang="az">
-            <head>
-                <meta charset="UTF-8">
-                <title>Riyaziyyat mükafatlı yarış</title>
-                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-                <style>
-                    @page { margin: 0; size: A4; }
-                    body { margin: 0; padding: 40px; font-family: 'Inter', sans-serif; background: #f6f8fa; }
-                    .ticket { width: 90%; margin: auto; background: #fff; border: 8px solid #27ae60; border-radius: 20px; display: flex; flex-direction: row; justify-content: space-between; padding: 30px; }
-                    .info p { margin: 6px 0; font-size: 16px; }
-                    .social h3 { color: #ff7b00; margin-bottom: 12px; }
-                    .qr img { width: 120px; height: 120px; border: 2px solid #27ae60; }
-                    .footer { text-align: center; font-weight: 600; color: #27ae60; margin-top: 20px; }
-                </style>
-            </head>
-            <body>
-                <div class="ticket">
-                    <div class="left">
-                        <h2>Riyaziyyat mükafatlı yarış</h2>
-                        <div class="info">
-                            <p><strong>Ad Soyad Ata adı:</strong> ${name}</p>
-                            <p><strong>İş nömrəsi:</strong> ${code}</p>
-                            <p><strong>Sinif:</strong> ${grade}</p>
-                            <p><strong>Otaq:</strong> ${room}</p>
-                            <p><strong>Yer:</strong> ${seat}</p>
-                            <p><strong>BSP LearnUp tələbəsidir:</strong> ${cardBsp}</p>
-                            <p><strong>Tarix:</strong> 21.12.2025</p>
-                            <p><strong>Saat:</strong> ${time}</p>
-                            <p><strong>Ünvan:</strong> Bakıxanov qəs., Villa Plaza</p>
-                        </div>
-                        <p class="footer">🧮 BSP LearnUp ilə fərq yarat!<br>“Əziyyət çək, zirvəyə qalx!”</p>
-                    </div>
-                    <div class="right">
-                        <div class="social">
-                            <h3>📱 Bizi izləyin:</h3>
-                            <p>🎥 YouTube: <b>Riyaziyyat hər kəs üçün</b></p>
-                            <p>📸 Instagram: <b>math.bsp.az</b> | <b>bsplearnup</b></p>
-                            <p>💬 Telegram: <b>riyaziyyatherkesucun</b></p>
-                            <p>🌐 Sayt: <b>mathbsp.az</b></p>
-                            <p>📞 Əlaqə: <b>070 621 12 29</b></p>
-                        </div>
-                        <div class="qr">
-                            <img src="mathbsp-az-qr-code.png" alt="QR Kod">
-                        </div>
-                    </div>
-                </div>
-            </body>
-            </html>
-        `);
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <title>${examTitle}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    @page { margin: 0; size: A4; }
+    body { margin: 0; padding: 40px; font-family: 'Inter', sans-serif; background: #f6f8fa; }
+    .ticket { width: 90%; margin: auto; background: #fff; border: 8px solid #27ae60; border-radius: 20px; display: flex; flex-direction: row; justify-content: space-between; padding: 30px; }
+    .info p { margin: 6px 0; font-size: 16px; }
+    .social h3 { color: #ff7b00; margin-bottom: 12px; }
+    .qr img { width: 120px; height: 120px; border: 2px solid #27ae60; }
+    .footer { text-align: center; font-weight: 600; color: #27ae60; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="ticket">
+    <div class="left">
+      <h2>${examTitle}</h2>
+      <div class="info">
+        <p><strong>Ad Soyad Ata adı:</strong> ${name}</p>
+        <p><strong>İş nömrəsi:</strong> ${code}</p>
+        <p><strong>Sinif:</strong> ${grade}</p>
+        <p><strong>Otaq:</strong> ${room}</p>
+        <p><strong>Yer:</strong> ${seat}</p>
+        <p><strong>BSP LearnUp tələbəsidir:</strong> ${cardBsp}</p>
+        <p><strong>Tarix:</strong> ${dateText}</p>
+        <p><strong>Saat:</strong> ${time}</p>
+        <p><strong>Ünvan:</strong> Bakıxanov qəs., Villa Plaza</p>
+      </div>
+
+      <p class="footer">🧮 BSP LearnUp ilə fərq yarat!<br>“Əziyyət çək, zirvəyə qalx!”</p>
+    </div>
+
+    <div class="right">
+      <div class="social">
+        <h3>📱 Bizi izləyin:</h3>
+        <p>🎥 YouTube: <b>Riyaziyyat hər kəs üçün</b></p>
+        <p>📸 Instagram: <b>math.bsp.az</b> | <b>bsplearnup</b></p>
+        <p>💬 Telegram: <b>riyaziyyatherkesucun</b></p>
+        <p>🌐 Sayt: <b>mathbsp.az</b></p>
+        <p>📞 Əlaqə: <b>070 621 12 29</b></p>
+      </div>
+      <div class="qr">
+        <img src="mathbsp-az-qr-code.png" alt="QR Kod">
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+    `);
+
         printWindow.document.close();
         setTimeout(() => printWindow.print(), 300);
     }

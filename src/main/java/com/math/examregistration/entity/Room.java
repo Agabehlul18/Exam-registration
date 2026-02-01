@@ -17,4 +17,10 @@ public class Room {
     private String roomNo; // Məs: "Otaq 1"
     private int capacity; // Tutum
     private int currentCount; // Hal-hazırda neçə nəfər var
+
+    @Column(name = "b_current_count", nullable = false, columnDefinition = "integer default 0")
+    private int bCurrentCount;
+    // 11:30-da doluluq
+    private String bLastGroup;     // "MATH9" və ya "PHYSICS" (null ola bilər)
+
 }

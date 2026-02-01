@@ -1,357 +1,832 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Şagird Qeydiyyatı</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        /* 🔄 Reset & Base */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root{
+            --bg1:#0ea5e9;
+            --bg2:#22c55e;
+            --bg3:#a78bfa;
+
+            --glass: rgba(255,255,255,.18);
+            --glass2: rgba(255,255,255,.12);
+
+            --text:#0f172a;
+            --muted:#475569;
+
+            --border: rgba(255,255,255,.28);
+            --shadow: 0 18px 60px rgba(2,6,23,.18);
+            --shadow2: 0 10px 30px rgba(2,6,23,.12);
+
+            --radius: 22px;
         }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: radial-gradient(circle at 20% 20%, #83f1a7, #ffffff, #6bf6ab);
-            min-height: 100vh;
+        *{ margin:0; padding:0; box-sizing:border-box; }
+
+        body{
+            font-family:'Poppins', sans-serif;
+            color:var(--text);
+            min-height:100vh;
+            overflow-x:hidden;
+
+            background:
+                    radial-gradient(900px 600px at 10% 10%, rgba(34,197,94,.45), transparent 60%),
+                    radial-gradient(900px 600px at 90% 20%, rgba(14,165,233,.40), transparent 55%),
+                    radial-gradient(900px 700px at 30% 90%, rgba(167,139,250,.35), transparent 55%),
+                    linear-gradient(180deg, #f8fafc, #ecfeff);
+
             padding-top: 90px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: 0.5s ease;
-            color: #0f172a;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
         }
 
-        /* 🔥 Modern Sticky Header */
-        header {
+        /* Loader */
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Floating blobs */
+        .blob{
+            position: fixed;
+            width: 460px; height: 460px;
+            border-radius: 50%;
+            filter: blur(48px);
+            opacity: .22;
+            z-index:0;
+            animation: float 10s ease-in-out infinite;
+            pointer-events:none;
+        }
+        .blob.b1{ left:-160px; top:120px; background: linear-gradient(135deg, var(--bg2), var(--bg1)); }
+        .blob.b2{ right:-180px; top:140px; background: linear-gradient(135deg, var(--bg1), var(--bg3)); animation-delay: -2s; }
+        .blob.b3{ left: 22%; bottom:-240px; background: linear-gradient(135deg, var(--bg3), var(--bg2)); animation-delay: -4s; }
+        @keyframes float{
+            0%,100%{ transform: translateY(0) translateX(0) scale(1); }
+            50%{ transform: translateY(-22px) translateX(14px) scale(1.04); }
+        }
+
+        /* Header */
+        header{
             position: fixed;
             top: 0; left: 0;
             width: 100%;
-            padding: 16px 48px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(22,163,74,0.85);
-            backdrop-filter: blur(14px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 12px 40px rgba(22,163,74,0.28);
-            z-index: 1000;
-            animation: fadeDown .5s ease;
+            padding: 14px 20px;
+            z-index: 60;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+
+            background: rgba(255,255,255,.20);
+            backdrop-filter: blur(22px);
+            border-bottom: 1px solid rgba(255,255,255,.22);
+            box-shadow: 0 18px 45px rgba(2,6,23,.10);
         }
 
-        @keyframes fadeDown {
-            from { opacity: 0; transform: translateY(-25px); }
-            to { opacity: 1; transform: translateY(0); }
+        header:before{
+            content:"";
+            position:absolute;
+            left:0; right:0; top:0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--bg2), var(--bg1), var(--bg3));
+            opacity: .9;
         }
 
-        header h1 {
-            font-size: 1.7rem;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-            background: linear-gradient(135deg, #ffffff, #e0ffe8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .brand{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            user-select:none;
+            position:relative;
+            z-index:1;
         }
 
-        nav {
-            display: flex;
-            gap: 22px;
+        .logo{
+            width: 44px; height:44px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--bg2), var(--bg1));
+            box-shadow: 0 18px 34px rgba(34,197,94,.22);
+            display:grid;
+            place-items:center;
+            color:white;
+            font-weight:900;
+            letter-spacing:-.6px;
+            position:relative;
+            overflow:hidden;
+        }
+        .logo:after{
+            content:"";
+            position:absolute;
+            inset:-30%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.45), transparent 55%);
+            transform: rotate(25deg);
+            opacity:.9;
         }
 
-        nav a {
-            text-decoration: none;
-            color: #ffffff;
-            font-weight: 500;
-            padding: 8px 18px;
-            border-radius: 12px;
-            transition: 0.25s ease;
+        header h1{
+            font-size: 1.06rem;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -.2px;
+        }
+        header h1 span{
+            display:block;
+            font-size:.78rem;
+            font-weight:600;
+            color: rgba(71,85,105,.85);
+            margin-top:4px;
         }
 
-        nav a:hover {
-            background: rgba(255,255,255,0.18);
-            transform: translateY(-2px);
+        nav{
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+            justify-content:flex-end;
+            position:relative;
+            z-index:1;
+        }
+        nav a{
+            text-decoration:none;
+            color: rgba(15,23,42,.92);
+            font-weight:800;
+            font-size:.92rem;
+            padding: 10px 14px;
+            border-radius: 999px;
+
+            background: rgba(255,255,255,.38);
+            border: 1px solid rgba(255,255,255,.28);
+            transition: .18s ease;
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+        nav a:hover{
+            transform: translateY(-1px);
+            background: rgba(255,255,255,.60);
+            box-shadow: 0 12px 24px rgba(2,6,23,.10);
+        }
+        nav a.active{
+            background: linear-gradient(135deg, rgba(34,197,94,.22), rgba(14,165,233,.22));
+            border-color: rgba(34,197,94,.35);
         }
 
-        nav a.active {
-            background: rgba(255,255,255,0.3);
+        main{
+            width: 100%;
+            max-width: 1120px;
+            padding: 0 16px 28px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .grid{
+            display:grid;
+            grid-template-columns: 1.1fr .9fr;
+            gap: 18px;
+            align-items:start;
+        }
+        @media (max-width: 980px){
+            .grid{ grid-template-columns: 1fr; }
+        }
+
+        /* Panels */
+        .panel{
+            border-radius: var(--radius);
+            background: rgba(255,255,255,.56);
+            border: 1px solid rgba(255,255,255,.38);
+            backdrop-filter: blur(18px);
+            box-shadow: var(--shadow);
+            overflow:hidden;
+            transform: translateZ(0);
+        }
+        .panel:hover{
+            box-shadow: 0 22px 72px rgba(2,6,23,.18);
+        }
+
+        .panel-header{
+            padding: 18px 18px 14px;
+            border-bottom: 1px solid rgba(15,23,42,.06);
+            background:
+                    linear-gradient(135deg, rgba(34,197,94,.14), rgba(14,165,233,.12));
+        }
+
+        .panel-title{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap: 10px;
+        }
+
+        .panel-title h2{
+            font-size: 1.28rem;
+            font-weight: 900;
+            letter-spacing: -.5px;
+        }
+
+        .chip{
+            padding: 8px 10px;
+            border-radius: 999px;
+            font-size: .78rem;
+            font-weight: 900;
+            color: rgba(15,23,42,.85);
+            background: rgba(255,255,255,.60);
+            border: 1px solid rgba(255,255,255,.35);
+            box-shadow: 0 10px 20px rgba(2,6,23,.08);
+        }
+
+        .panel-sub{
+            margin-top: 8px;
+            color: rgba(71,85,105,.92);
+            font-size: .92rem;
+            line-height: 1.35;
             font-weight: 600;
         }
 
-        /* 📦 Modern Card + Form Container */
-        .form-container,
-        .card-container {
-            width: 100%;
-            max-width: 520px;
-            padding: 34px;
-            margin-bottom: 40px;
-            border-radius: 22px;
-            background: rgba(255,255,255,0.72);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.45);
-            box-shadow:
-                    0 8px 22px rgba(0,0,0,0.05),
-                    0 20px 60px rgba(0,0,0,0.12);
-            transition: 0.35s ease;
+        form{ padding: 18px; }
+
+        .fields{
+            display:grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        @media (max-width: 640px){
+            .fields{ grid-template-columns: 1fr; }
         }
 
-        .form-container:hover,
-        .card-container:hover {
-            transform: translateY(-6px);
-            box-shadow:
-                    0 20px 60px rgba(0,0,0,0.15),
-                    0 30px 80px rgba(0,0,0,0.12);
+        .field{
+            display:flex;
+            flex-direction:column;
+            gap: 8px;
+        }
+        .field label{
+            font-size: .86rem;
+            font-weight: 900;
+            color: rgba(15,23,42,.86);
         }
 
-        h2 {
-            text-align: center;
-            font-size: 26px;
-            margin-bottom: 28px;
-            background: linear-gradient(135deg, #16a34a, #0f766e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .control{ position: relative; }
+
+        .icon{
+            position:absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            opacity: .78;
+            pointer-events:none;
         }
 
-        /* 🧊 Smooth Inputs */
-        input,
-        select {
-            width: 100%;
-            padding: 14px 16px;
-            font-size: 15px;
-            border-radius: 14px;
-            border: 1px solid rgba(34,197,94,0.25);
-            background: rgba(255,255,255,0.9);
-            box-shadow: 0 4px 14px rgba(0,0,0,0.04);
-            transition: 0.25s ease;
+        input, select{
+            width:100%;
+            padding: 13px 14px 13px 38px;
+            border-radius: 16px;
+            border: 1px solid rgba(148,163,184,.35);
+            background: rgba(255,255,255,.75);
+            box-shadow: 0 10px 24px rgba(2,6,23,.06);
+            font-size: .95rem;
+            outline:none;
+            transition: .18s ease;
         }
 
-        input:focus,
-        select:focus {
-            border-color: #16a34a;
-            box-shadow: 0 0 6px rgba(34,197,94,0.3);
-            outline: none;
+        input:focus, select:focus{
+            border-color: rgba(34,197,94,.58);
+            box-shadow: 0 0 0 6px rgba(34,197,94,.14), 0 14px 28px rgba(2,6,23,.10);
+            transform: translateY(-1px);
         }
 
-        /* 🟢 Primary Button */
-        button {
-            width: 100%;
-            padding: 14px;
+        /* BSP block */
+        .bsp{
+            display:flex;
+            align-items:center;
+            gap:10px;
             margin-top: 12px;
-            background: linear-gradient(135deg, #22c55e, #0d9488);
+            padding: 12px 14px;
+            border-radius: 16px;
+            background: rgba(255,255,255,.58);
+            border: 1px dashed rgba(34,197,94,.40);
+        }
+        .bsp input{
+            width: 18px; height:18px;
+            padding:0;
+            border-radius: 6px;
+            box-shadow:none;
+            transform:none !important;
+        }
+        .bsp small{
+            color: rgba(71,85,105,.95);
+            font-weight: 700;
+        }
+
+        /* Actions */
+        .actions{
+            margin-top: 14px;
+            display:flex;
+            gap: 10px;
+            align-items:center;
+        }
+
+        button{
+            width:100%;
+            padding: 13px 14px;
             border: none;
-            border-radius: 14px;
-            color: #ffffff;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.28s ease;
-            box-shadow: 0 6px 20px rgba(34, 255, 114, 0.35);
+            border-radius: 16px;
+            cursor:pointer;
+            color:white;
+            font-weight: 900;
+            letter-spacing: .2px;
+            font-size: .98rem;
+            transition:.18s ease;
+            background: linear-gradient(135deg, var(--bg2), var(--bg1));
+            box-shadow: 0 16px 36px rgba(34,197,94,.22);
+        }
+        button:hover{
+            transform: translateY(-1px);
+            box-shadow: 0 18px 38px rgba(14,165,233,.22);
+        }
+        button:disabled{
+            opacity:.7;
+            cursor:not-allowed;
+            transform:none;
         }
 
-        button:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 10px 28px rgb(0, 255, 75);
+        /* Result toast */
+        #result{
+            margin-top: 14px;
+            padding: 12px 14px;
+            border-radius: 16px;
+            font-weight: 900;
+            display:none;
+            align-items:center;
+            justify-content:space-between;
+            gap: 10px;
+            border: 1px solid transparent;
+            animation: pop .25s ease;
         }
-
-        /* 🔔 Result Messages */
-        #result {
-            margin-top: 18px;
-            padding: 14px;
-            border-radius: 14px;
-            text-align: center;
-            font-weight: 500;
-            animation: fadeIn .3s ease;
+        @keyframes pop{
+            from{ opacity:0; transform: translateY(10px); }
+            to{ opacity:1; transform: translateY(0); }
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        #result.success{
+            display:flex;
+            background: rgba(34,197,94,.12);
+            border-color: rgba(34,197,94,.22);
+            color: #065f46;
         }
-
-        #result.success {
-            background: #d1fae5;
-            border: 1px solid #86efac;
-            color: #007120;
-        }
-
-        #result.error {
-            background: #fee2e2;
-            border: 1px solid #fecaca;
+        #result.error{
+            display:flex;
+            background: rgba(239,68,68,.10);
+            border-color: rgba(239,68,68,.22);
             color: #991b1b;
         }
-
-        /* 📊 Card styles */
-        .card {
-            padding: 26px;
-            border-radius: 20px;
-            background: rgba(255,255,255,0.85);
-            border: 1px solid rgba(128, 255, 174, 0.25);
-            box-shadow: 0 18px 50px rgba(0,0,0,0.08);
-            transition: 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 26px 70px rgba(0,0,0,0.12);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .card-header h1 {
-            font-size: 18px;
-            background: linear-gradient(135deg, #22c55e, #0d9488);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .card p {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            font-size: 15px;
-            color: #374151;
-        }
-
-        /* 🔘 Button Group */
-        .btn-group {
-            display: flex;
-            gap: 12px;
-            margin-top: 18px;
-        }
-
-        .btn-group button {
-            flex: 1;
-            padding: 12px;
+        #result .x{
+            width: 34px; height:34px;
             border-radius: 12px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            color: white;
-            background: linear-gradient(135deg, #00f158, #d15517);
-            transition: 0.28s ease;
+            display:grid;
+            place-items:center;
+            background: rgba(255,255,255,.62);
+            border: 1px solid rgba(255,255,255,.35);
+            cursor:pointer;
+            user-select:none;
         }
 
-        .btn-group button:nth-child(2) {
-            background: linear-gradient(135deg, #0ea5e9, #0369a1);
+        .helper{
+            margin-top: 10px;
+            font-size: .85rem;
+            color: rgba(71,85,105,.88);
+            line-height: 1.35;
+            font-weight: 700;
         }
 
-        .btn-group button:hover {
-            transform: translateY(-2px);
+        /* Ticket */
+        .ticket-wrap{ padding: 18px; display:none; }
+        .ticket{
+            border-radius: var(--radius);
+            border: 1px solid rgba(255,255,255,.30);
+            background: rgba(255,255,255,.65);
+            backdrop-filter: blur(18px);
+            box-shadow: var(--shadow2);
+            overflow:hidden;
+            animation: pop .28s ease;
         }
 
-        /* 🌪 Spin Animation */
-        @keyframes spin {
-            0% { transform: rotate(0); }
-            100% { transform: rotate(360deg); }
+        .ticket-top{
+            padding: 16px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap: 12px;
+            background: linear-gradient(135deg, rgba(34,197,94,.16), rgba(14,165,233,.14));
+            border-bottom: 1px solid rgba(15,23,42,.06);
+        }
+        .ticket-top .left{ display:flex; align-items:center; gap:12px; }
+
+        .qr-mini{
+            width: 66px; height:66px;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,.35);
+            box-shadow: 0 12px 22px rgba(2,6,23,.10);
+            object-fit:cover;
+            background:white;
+        }
+        .ticket-top h3{
+            margin:0;
+            font-size: 1.06rem;
+            font-weight: 900;
+            letter-spacing: -.2px;
+        }
+        .ticket-top p{
+            margin-top: 4px;
+            font-size: .86rem;
+            color: rgba(71,85,105,.92);
+            font-weight: 700;
         }
 
+        .ticket-body{
+            padding: 16px;
+            display:grid;
+            gap: 10px;
+        }
 
+        .kv{
+            display:flex;
+            justify-content:space-between;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 16px;
+            background: rgba(255,255,255,.55);
+            border: 1px solid rgba(148,163,184,.20);
+            font-size: .95rem;
+        }
+        .kv b{ color: rgba(15,23,42,.92); font-weight: 900; }
+        .kv span{ color: rgba(71,85,105,.95); font-weight: 900; text-align:right; }
+
+        .ticket-actions{
+            padding: 14px 16px 16px;
+            border-top: 1px solid rgba(15,23,42,.06);
+            display:flex;
+            gap: 10px;
+        }
+        .btn-secondary{
+            background: linear-gradient(135deg, #16f1f9, var(--bg2));
+            box-shadow: 0 16px 36px rgba(249,115,22,.18);
+        }
+
+        .empty-note{
+            padding:18px;
+            color: rgba(71,85,105,.90);
+            font-weight: 800;
+        }
+
+        /* =========================
+           CONFIRM MODAL (YENI)
+           ========================= */
+        .overlay{
+            position: fixed;
+            inset: 0;
+            background: rgba(2,6,23,.45);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding: 16px;
+        }
+
+        .confirmModal{
+            width: min(520px, 100%);
+            background: rgba(255,255,255,.78);
+            border: 1px solid rgba(255,255,255,.38);
+            border-radius: 22px;
+            box-shadow: 0 22px 72px rgba(2,6,23,.25);
+            padding: 18px;
+            animation: pop .2s ease;
+        }
+
+        .confirmModal h3{
+            margin:0;
+            font-size: 1.12rem;
+            font-weight: 900;
+        }
+
+        .confirmList{
+            margin-top: 12px;
+            display:grid;
+            gap: 10px;
+        }
+
+        .confirmItem{
+            display:flex;
+            justify-content:space-between;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 16px;
+            background: rgba(255,255,255,.62);
+            border: 1px solid rgba(148,163,184,.22);
+            font-weight: 900;
+        }
+
+        .confirmItem span:first-child{
+            color: rgba(71,85,105,.95);
+        }
+
+        .confirmItem span:last-child{
+            color: rgba(15,23,42,.92);
+            text-align:right;
+        }
+
+        .confirmActions{
+            display:flex;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .confirmActions button{
+            width: 100%;
+            border-radius: 16px;
+            padding: 12px 14px;
+            font-weight: 900;
+        }
+
+        .btnNo{
+            background: linear-gradient(135deg, #ef4444, #f97316) !important;
+            box-shadow: 0 16px 36px rgba(239,68,68,.20) !important;
+        }
+
+        .btnYes{
+            background: linear-gradient(135deg, var(--bg2), var(--bg1)) !important;
+        }
     </style>
 </head>
+
 <body>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div class="blob b3"></div>
 
 <header>
-    <h1>📘 İmtahanların İdarə Paneli</h1>
+    <div class="brand">
+        <div class="logo">BSP</div>
+        <h1>
+            İmtahanların İdarə Paneli
+            <span>Şagird qeydiyyatı və bilet çapı</span>
+        </h1>
+    </div>
     <nav>
         <a href="index.html">🏠 Ana səhifə</a>
         <a href="room.html">🏫 Otaqlar</a>
-        <a href="room-detailed.html">🏫 Otaq sitemi</a>
+        <a href="room-detailed.html">🧩 Sistem</a>
         <a href="students.html" class="active">👨‍🎓 Tələbələr</a>
     </nav>
 </header>
 
-<div class="form-container">
-    <h2>Şagird Qeydiyyatı</h2>
-    <form id="studentForm">
-        <input type="text" name="name" placeholder="Ad" required><br><br>
-        <input type="text" name="surname" placeholder="Soyad" required><br><br>
-        <input type="text" name="fatherName" placeholder="Ata adı" required><br><br>
-        <label for="studentType" style="font-size:15px;">Sinif:</label><br>
-        <select name="grade" required>
-            <option value="">Sinif seçin</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-            <option value="12">12</option>
-        </select><br><br>
-        <input type="text" name="phone" placeholder="Telefon nömrəsi" required><br><br>
-        <label for="studentType" style="font-size:15px;">Qrup seçin:</label><br>
-        <select id="studentType" name="studentType" required onchange="updatePaymentAmount()">
-            <option value="">Seçin...</option>
-            <option value="BSP">BSP tələbəsi</option>
-            <option value="Other">Kənar tələbə</option>
-        </select><br><br>
-        <label for="studentType" style="font-size:15px;">Ödəniş:</label><br>
-
-        <input type="number" id="paymentAmount" name="paymentAmount" step="0.01" placeholder="Ödəniş məbləği (AZN)" readonly required><br><br>
-        <label for="examTime" style="font-size:15px;">İmtahan vaxtı:</label><br>
-        <select id="examTime" name="examTime" required>
-            <option value="">Saat seçin</option>
-            <option value="10:00" selected>10:00</option>
-
-        </select><br><br>
-
-        <select name="examId" required>
-            <option value="">İmtahan seçin</option>
-            <option value="5" selected>Riyaziyyat mükafatlı yarış</option>
-        </select><br><br>
-
-
-        <div style="display:flex;align-items:center;gap:10px;">
-            <input
-                    type="checkbox"
-                    id="bspStudent"
-                    name="bspStudent"
-                    style="width:20px;height:20px;pointer-events:none;opacity:0.8;cursor:not-allowed;">
-            <label for="bspStudent" style="font-size:15px;">BSP LearnUp tələbəsiyəm</label>
-        </div>
-        <button type="submit">Qeyd et</button>
-    </form>
-    <div id="result"></div>
-</div>
-
-<div class="card-container" id="cardContainer" style="display:none;">
-    <div class="card" id="printCard">
-        <div class="card-header">
-            <img src="mathbsp-az-qr-code.png" alt="QR Kod" style="width:80px;height:80px;">
-            <div style="text-align:right;">
-                <h1>Riyaziyyat mükafatlı yarış</h1>
-                <p><span id="cardDate"></span> | <span id="cardTime"></span></p>
+<main>
+    <div class="grid">
+        <!-- LEFT -->
+        <section class="panel">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <h2>Şagird Qeydiyyatı</h2>
+                    <div class="chip">Bilet</div>
+                </div>
+                <div class="panel-sub">
+                    Məlumatları doldurun və qeydiyyatı tamamlayın.
+                </div>
             </div>
-        </div>
-        <p><strong>Ad Soyad Ata adı:</strong> <span id="cardName"></span></p>
-        <p><strong>İş nömrəsi:</strong> <span id="cardCode"></span></p>
-        <p><strong>Sinif:</strong> <span id="cardGrade"></span></p>
-        <p><strong>Otaq / Yer:</strong> <span id="cardRoom"></span> | <span id="cardSeat"></span></p>
-        <p><strong>BSP tələbəsidir:</strong> <span id="cardBsp"></span></p>
-        <p><strong>Ünvan:</strong> Bakıxanov qəs., Villa Plaza</p>
-        <p><strong>Saat:</strong> <span id="cardExamTime"></span></p>
+
+            <form id="studentForm">
+                <div class="fields">
+                    <div class="field">
+                        <label>Ad</label>
+                        <div class="control">
+                            <span class="icon">👤</span>
+                            <input type="text" name="name" placeholder="Məs: Ağa" required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Soyad</label>
+                        <div class="control">
+                            <span class="icon">🪪</span>
+                            <input type="text" name="surname" placeholder="Məs: Əliyev" required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Ata adı</label>
+                        <div class="control">
+                            <span class="icon">🧾</span>
+                            <input type="text" name="fatherName" placeholder="Məs: Bəhlul" required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Telefon</label>
+                        <div class="control">
+                            <span class="icon">📞</span>
+                            <input type="text" name="phone" placeholder="Məs: 070 777 00 00" required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Sinif</label>
+                        <div class="control">
+                            <span class="icon">🎓</span>
+                            <select id="gradeSelect" name="grade" required onchange="updateExamTime()">
+                                <option value="">Sinif seçin</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Qrup</label>
+                        <div class="control">
+                            <span class="icon">👥</span>
+                            <select id="studentType" name="studentType" required onchange="updatePaymentAmount()">
+                                <option value="">Seçin...</option>
+                                <option value="BSP">BSP tələbəsi</option>
+                                <option value="Other">Kənar tələbə</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Ödəniş (AZN)</label>
+                        <div class="control">
+                            <span class="icon">💳</span>
+                            <input type="number" id="paymentAmount" name="paymentAmount" step="0.01" readonly required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>İmtahan</label>
+                        <div class="control">
+                            <span class="icon">📝</span>
+                            <select id="examSelect" name="examId" required onchange="updateSelectedExam(); updateExamTime();">
+                                <option value="">İmtahan seçin</option>
+                                <option value="6">Riyaziyyat buraxılış sınaq 5</option>
+                                <option value="7">Fizika mövzu sınağı 2</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>İmtahan vaxtı</label>
+                        <div class="control">
+                            <span class="icon">⏰</span>
+                            <select id="examTime" name="examTime" required>
+                                <option value="10:00">10:00</option>
+                                <option value="11:30">11:30</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bsp">
+                    <input type="checkbox" id="bspStudent" name="bspStudent"
+                           style="pointer-events:none; opacity:.85; cursor:not-allowed;">
+                    <div>
+                        <div style="font-weight:900;">BSP LearnUp tələbəsiyəm</div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button type="submit">✅ Qeydiyyatı tamamla</button>
+                </div>
+
+                <div id="result">
+                    <div id="resultText">Mesaj</div>
+                    <div class="x" onclick="hideResult()">✕</div>
+                </div>
+
+
+            </form>
+        </section>
+
+        <!-- RIGHT -->
+        <section class="panel">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <h2>Bilet</h2>
+                    <div class="chip">Çap üçün hazır</div>
+                </div>
+                <div class="panel-sub">
+                    ...
+                </div>
+            </div>
+
+            <div class="ticket-wrap" id="cardContainer">
+                <div class="ticket" id="printCard">
+                    <div class="ticket-top">
+                        <div class="left">
+                            <img class="qr-mini" src="mathbsp-az-qr-code.png" alt="QR Kod">
+                            <div>
+                                <h3 id="cardExamName">İmtahan</h3>
+                                <p><span id="cardDate"></span> • <span id="cardTime"></span></p>
+                            </div>
+                        </div>
+                        <div class="chip" style="font-size:.80rem;">BSP</div>
+                    </div>
+
+                    <div class="ticket-body">
+                        <div class="kv"><b>Ad Soyad Ata adı</b><span id="cardName"></span></div>
+                        <div class="kv"><b>İş nömrəsi</b><span id="cardCode"></span></div>
+                        <div class="kv"><b>Sinif</b><span id="cardGrade"></span></div>
+                        <div class="kv"><b>Otaq / Yer</b><span><span id="cardRoom"></span> • <span id="cardSeat"></span></span></div>
+                        <div class="kv"><b>BSP tələbəsidir</b><span id="cardBsp"></span></div>
+                        <div class="kv"><b>Saat</b><span id="cardExamTime"></span></div>
+                        <div class="kv"><b>Ünvan</b><span>Bakıxanov qəs., Villa Plaza</span></div>
+                    </div>
+
+                    <div class="ticket-actions">
+                        <button class="btn-secondary" onclick="printCard()">🖨️ Çap et</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="empty-note" id="emptyNote">
+                ...
+            </div>
+        </section>
     </div>
-    <div class="btn-group">
-        <button onclick="printCard()">Çap et</button>
+</main>
+
+<!-- =========================
+     CONFIRM MODAL (YENI)
+     ========================= -->
+<div id="confirmOverlay" class="overlay" style="display:none;">
+    <div class="confirmModal">
+        <h3>✅ Əminsən?</h3>
+        <p style="margin-top:6px; color: rgba(71,85,105,.95); font-weight:700;">
+            Aşağıdakı məlumatlar düzdür?
+        </p>
+
+        <div class="confirmList" id="confirmList"></div>
+
+        <div class="confirmActions">
+            <button type="button" class="btnNo" onclick="closeConfirm(false)">❌ Yox</button>
+            <button type="button" class="btnYes" onclick="closeConfirm(true)">✅ Hə, qeyd et</button>
+        </div>
     </div>
 </div>
+
 <script>
+    const EXAMS = {
+        "6": { name: "Riyaziyyat buraxılış sınaq 5" },
+        "7": { name: "Fizika mövzu sınağı 2" }
+    };
+
+    function hideResult(){
+        const r = document.getElementById('result');
+        r.className = '';
+        r.style.display = 'none';
+    }
+
+    function showResult(type, text){
+        const r = document.getElementById('result');
+        document.getElementById('resultText').textContent = text;
+        r.className = type;
+        r.style.display = 'flex';
+    }
+
+    function updateSelectedExam() {
+        const examId = document.getElementById("examSelect").value;
+        const examName = EXAMS[examId]?.name || "İmtahan";
+        document.getElementById("cardExamName").textContent = examName;
+    }
+
+    function updateExamTime() {
+        const grade = document.getElementById("gradeSelect").value;
+        const examId = document.getElementById("examSelect").value;
+        const examTimeSelect = document.getElementById("examTime");
+
+        if (!grade || !examId) return;
+
+        if (examId === "6") {
+            if (grade === "9") examTimeSelect.value = "11:30";
+            else if (grade === "10" || grade === "11") examTimeSelect.value = "10:00";
+            else examTimeSelect.value = "10:00";
+        } else if (examId === "7") {
+            examTimeSelect.value = "11:30";
+        }
+    }
+
     function updatePaymentAmount() {
         const type = document.getElementById("studentType").value;
         const paymentInput = document.getElementById("paymentAmount");
         const bspCheckbox = document.getElementById("bspStudent");
 
-        // Avtomatik doldurma və BSP statusunun idarəsi
-        switch(type) {
+        switch (type) {
             case "BSP":
-                paymentInput.value = 2;
+                paymentInput.value = 0;
                 bspCheckbox.checked = true;
                 break;
-
             case "Other":
-                paymentInput.value = 10;
+                paymentInput.value = 5;
                 bspCheckbox.checked = false;
                 break;
             default:
@@ -359,31 +834,93 @@
                 bspCheckbox.checked = false;
         }
     }
+
+    function formatDateAZ(d){
+        const dd = String(d.getDate()).padStart(2,'0');
+        const mm = String(d.getMonth()+1).padStart(2,'0');
+        const yyyy = d.getFullYear();
+        return `${dd}.${mm}.${yyyy}`;
+    }
+
+    /* =========================
+       CONFIRM MODAL JS (YENI)
+       ========================= */
+    let confirmResolver = null;
+
+    function openConfirm(summaryObj){
+        const overlay = document.getElementById("confirmOverlay");
+        const list = document.getElementById("confirmList");
+
+        list.innerHTML = Object.entries(summaryObj).map(([k,v]) => `
+        <div class="confirmItem">
+          <span>${k}</span>
+          <span>${v}</span>
+        </div>
+      `).join("");
+
+        overlay.style.display = "flex";
+
+        return new Promise((resolve) => {
+            confirmResolver = resolve;
+        });
+    }
+
+    function closeConfirm(answer){
+        const overlay = document.getElementById("confirmOverlay");
+        overlay.style.display = "none";
+        if (confirmResolver) confirmResolver(answer);
+        confirmResolver = null;
+    }
 </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
     const form = document.getElementById('studentForm');
     const submitBtn = form.querySelector('button[type="submit"]');
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        updateSelectedExam();
+        updateExamTime();
+
         submitBtn.disabled = true;
         const originalText = submitBtn.innerHTML;
 
         submitBtn.innerHTML = `
-            <span style="display:inline-flex;align-items:center;gap:8px;">
-                <div style="border:3px solid #fff;border-top:3px solid transparent;border-radius:50%;width:16px;height:16px;animation:spin 1s linear infinite;"></div>
-                Yüklənir...
-            </span>`;
+        <span style="display:inline-flex;align-items:center;gap:10px;justify-content:center;">
+          <div style="border:3px solid rgba(255,255,255,.85);border-top:3px solid transparent;border-radius:50%;width:16px;height:16px;animation:spin 1s linear infinite;"></div>
+          Yüklənir...
+        </span>`;
 
         const formData = Object.fromEntries(new FormData(e.target).entries());
         formData.bspStudent = document.getElementById('bspStudent').checked;
-        formData.examId = parseInt(formData.examId);
+        formData.examId = parseInt(formData.examId, 10);
         formData.examTime = document.getElementById('examTime').value;
 
-        const resultDiv = document.getElementById('result');
+        const selectedExamId = String(formData.examId);
+        document.getElementById('cardExamName').innerText = EXAMS[selectedExamId]?.name || "İmtahan";
+
         const cardContainer = document.getElementById('cardContainer');
+        const emptyNote = document.getElementById('emptyNote');
+
+        /* =========================
+           CONFIRM (YENI) - fetch-dən əvvəl
+           ========================= */
+        const examName = EXAMS[String(document.getElementById("examSelect").value)]?.name || "İmtahan";
+        const summary = {
+            "Ad Soyad Ata adı": `${formData.name} ${formData.surname} ${formData.fatherName}`,
+            "Sinif": formData.grade || "-",
+            "Fənn / İmtahan": examName,
+            "Saat": formData.examTime || "-"
+        };
+
+        const ok = await openConfirm(summary);
+        if (!ok) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+            showResult("error", "Qeydiyyat ləğv edildi.");
+            return;
+        }
 
         try {
             const res = await fetch('/api/students/add', {
@@ -392,41 +929,35 @@
                 body: JSON.stringify(formData)
             });
 
-            // Cavabı JSON kimi oxuyuruq
             const data = await res.json();
 
             if (!res.ok) {
-                // Xəta mesajını düzgün çıxarırıq
                 const errorMessage = data.message || "Gözlənilməz xəta baş verdi!";
                 throw new Error(errorMessage);
             }
 
             const student = data;
 
-            // ✅ Kart məlumatları
             document.getElementById('cardExamTime').innerText = formData.examTime;
             document.getElementById('cardName').innerText = `${student.name} ${student.surname} ${student.fatherName}`;
             document.getElementById('cardGrade').innerText = student.grade;
             document.getElementById('cardCode').innerText = student.studentCode;
             document.getElementById('cardRoom').innerText = student.room.roomNo;
             document.getElementById('cardSeat').innerText = student.seatNo;
+
             document.getElementById('cardBsp').innerHTML = student.bspStudent
-                ? "<span style='color:green;font-weight:bold;'>Bəli ✅</span>"
-                : "<span style='color:red;font-weight:bold;'>Xeyr ❌</span>";
+                ? "<span style='color:#065f46;font-weight:900;'>Bəli ✅</span>"
+                : "<span style='color:#991b1b;font-weight:900;'>Xeyr ❌</span>";
 
             const now = new Date();
-            document.getElementById('cardDate').innerText = now.toLocaleDateString();
-            document.getElementById('cardTime').innerText = now.toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+            document.getElementById('cardDate').innerText = formatDateAZ(now);
+            document.getElementById('cardTime').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
             cardContainer.style.display = 'block';
-            resultDiv.className = "success";
-            resultDiv.innerText = "Şagird uğurla qeydiyyatdan keçdi!";
+            emptyNote.style.display = 'none';
+            showResult("success", "Şagird uğurla qeydiyyatdan keçdi!");
         } catch (err) {
-            resultDiv.className = "error";
-            resultDiv.innerText = err.message;
+            showResult("error", err.message);
             cardContainer.style.display = 'none';
         } finally {
             submitBtn.disabled = false;
@@ -435,148 +966,88 @@
     });
 
     function printCard() {
-        const card = document.getElementById('printCard').outerHTML;
+        const examName = document.getElementById('cardExamName').textContent || "İmtahan";
         const printWindow = window.open('', '_blank');
+
+        const saleDate = document.getElementById('cardDate').textContent;
+        const saleTime = document.getElementById('cardTime').textContent;
+
         printWindow.document.write(`
-    <!DOCTYPE html>
-    <html lang="az">
-    <head>
-      <meta charset="UTF-8">
-      <title>Riyaziyyat 0-dan 100-ə</title>
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-      <style>
-        @page { margin: 0; size: A4; }
-        * { box-sizing: border-box; }
-        body {
-          margin: 0;
-          padding: 40px;
-          display: flex;
-          justify-content: center;
-          font-family: 'Inter', sans-serif;
-          background: #f6f8fa;
-        }
-        .ticket {
-          width: 90%;
-          background: #fff;
-          border: 8px solid #27ae60;
-          border-radius: 20px;
-          display: flex;
-          flex-direction: row;
-          gap: 30px;
-          padding: 30px;
-          box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-        }
-        .left {
-          width: 48%;
-          display: flex;
-          flex-direction: column;
-        }
-        .left-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 15px;
-        }
-        .left-header h1 {
-          margin: 0;
-          font-size: 20px;
-          font-weight: 700;
-          color: #000000;
-        }
-        .info p {
-          margin: 6px 0;
-          font-size: 16px;
-          line-height: 1.7;
-        }
-        .right {
-          width: 48%;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-        }
-        .social h3 {
-          color: #ff7b00;
-          margin-bottom: 12px;
-          font-size: 18px;
-        }
-        .social p {
-          margin: 4px 0;
-          font-size: 15px;
-        }
-        .footer {
-          text-align: center;
-          font-weight: 600;
-          color: #27ae60;
-          border-top: 1px solid #e5e7eb;
-          padding-top: 12px;
-          font-size: 14px;
-        }
-        .qr {
-          margin-bottom: 30px;
-          text-align: center;
-        }
-        .qr img {
-          width: 120px;
-          height: 120px;
-          border-radius: 8px;
-          border: 2px solid #27ae60;
-        }
-        @media print {
-          body { background: white; margin: 0; }
-          .ticket { box-shadow: none; border: 1px solid #ccc; }
-        }
-      </style>
-    </head>
-    <body>
-      <div class="ticket">
-        <div class="left">
-          <div class="left-header">
-            <div>
-         <h2 style="color: #004815;">Riyaziyyat mükafatlı yarış</h2>
-
-            </div>
-          </div>
-          <div class="info">
-            <p><strong>Ad Soyad Ata adı:</strong> ${document.getElementById('cardName').textContent}</p>
-            <p><strong>İş nömrəsi:</strong> ${document.getElementById('cardCode').textContent}</p>
-            <p><strong>Sinif:</strong> ${document.getElementById('cardGrade').textContent}</p>
-            <p><strong>Otaq:</strong> ${document.getElementById('cardRoom').textContent} </p>
-            <p><strong>Yer:</strong> ${document.getElementById('cardSeat').textContent}</p>
-            <p><strong>BSP LearnUp tələbəsidir:</strong> ${document.getElementById('cardBsp').textContent}</p>
-            <p><strong>Tarix:</strong> 21.12.2025</p>
-            <p><strong>Saat:</strong> ${document.getElementById('cardExamTime').textContent}</p>
-            <p><strong>Ünvan:</strong> Bakıxanov qəs., Villa Plaza</p>
-            <p>Biletin satış tarixi: ${document.getElementById('cardDate').textContent} | ${document.getElementById('cardTime').textContent}</p>
-          </div>
-
-        </div>
-
-        <div class="right">
-          <div class="social">
-            <h3>📱 Bizi izləyin:</h3>
-            <p>🎥 YouTube: <b>Riyaziyyat hər kəs üçün</b></p>
-            <p>📸 İnstagram: <b>math.bsp.az</b> | <b>bsplearnup</b></p>
-            <p>💬 Telegram: <b>riyaziyyatherkesucun</b></p>
-            <p>🌐 Sayt: <b>mathbsp.az</b></p>
-            <p>📞 Əlaqə: <b>070 621 12 29</b></p>
-
-          </div>
-          <div class="qr">
-            <img src="mathbsp-az-qr-code.png" alt="QR Kod">
-          </div>
-          <p class="footer">🧮 BSP LearnUp ilə fərq yarat!<br>“Əziyyət çək, zirvəyə qalx!”</p>
-        </div>
-      </div>
-    </body>
-    </html>
-    `);
-        printWindow.document.close();
-        setTimeout(() => printWindow.print(), 300);
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <title>${examName}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    @page { margin: 0; size: A4; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 40px; display: flex; justify-content: center; font-family: 'Inter', sans-serif; background: #f6f8fa; }
+    .ticket {
+      width: 92%;
+      background: #fff;
+      border: 10px solid #22c55e;
+      border-radius: 22px;
+      display: flex;
+      flex-direction: row;
+      gap: 26px;
+      padding: 26px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
     }
+    .left { width: 52%; }
+    .left h2{ margin:0 0 12px; font-size: 20px; color: #064e3b; }
+    .info p { margin: 6px 0; font-size: 15px; line-height: 1.7; }
+    .right { width: 48%; display: flex; flex-direction: column; justify-content: space-between; }
+    .social h3 { color: #f97316; margin-bottom: 10px; font-size: 16px; }
+    .social p { margin: 4px 0; font-size: 14px; }
+    .footer { text-align: center; font-weight: 700; color: #16a34a; border-top: 1px solid #e5e7eb; padding-top: 12px; font-size: 13px; }
+    .qr { margin-bottom: 22px; text-align: center; }
+    .qr img { width: 120px; height: 120px; border-radius: 12px; border: 2px solid #22c55e; }
+    @media print { body { background: white; margin: 0; } .ticket { box-shadow: none; border: 1px solid #ccc; } }
+  </style>
+</head>
+<body>
+  <div class="ticket">
+    <div class="left">
+      <h2>${examName}</h2>
+      <div class="info">
+        <p><strong>Ad Soyad Ata adı:</strong> ${document.getElementById('cardName').textContent}</p>
+        <p><strong>İş nömrəsi:</strong> ${document.getElementById('cardCode').textContent}</p>
+        <p><strong>Sinif:</strong> ${document.getElementById('cardGrade').textContent}</p>
+        <p><strong>Otaq:</strong> ${document.getElementById('cardRoom').textContent}</p>
+        <p><strong>Yer:</strong> ${document.getElementById('cardSeat').textContent}</p>
+        <p><strong>BSP LearnUp tələbəsidir:</strong> ${document.getElementById('cardBsp').textContent}</p>
+        <p><strong>Tarix:</strong> ${saleDate}</p>
+        <p><strong>Saat:</strong> ${document.getElementById('cardExamTime').textContent}</p>
+        <p><strong>Ünvan:</strong> Bakıxanov qəs., Villa Plaza</p>
+        <p>Biletin satış tarixi: ${saleDate} | ${saleTime}</p>
+      </div>
+    </div>
 
+    <div class="right">
+      <div class="social">
+        <h3>📱 Bizi izləyin:</h3>
+        <p>🎥 YouTube: <b>Riyaziyyat hər kəs üçün</b></p>
+        <p>📸 İnstagram: <b>math.bsp.az</b> | <b>bsplearnup</b></p>
+        <p>💬 Telegram: <b>riyaziyyatherkesucun</b></p>
+        <p>🌐 Sayt: <b>mathbsp.az</b></p>
+        <p>📞 Əlaqə: <b>070 621 12 29</b></p>
+      </div>
 
+      <div class="qr">
+        <img src="mathbsp-az-qr-code.png" alt="QR Kod">
+      </div>
+
+      <p class="footer">🧮 BSP LearnUp ilə fərq yarat!<br>“Əziyyət çək, zirvəyə qalx!”</p>
+    </div>
+  </div>
+</body>
+</html>
+      `);
+
+        printWindow.document.close();
+        setTimeout(() => printWindow.print(), 250);
+    }
 </script>
-
-
 </body>
 </html>

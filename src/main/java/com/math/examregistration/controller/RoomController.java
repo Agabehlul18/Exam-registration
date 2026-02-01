@@ -43,26 +43,26 @@ public class RoomController {
     /**
      * 🔹 Otaq məlumatlarını yenilə
      */
-    @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> updateRoom(@PathVariable Long id, @RequestBody Room room) {
-        Room updatedRoom = roomService.updateRoom(id, room);
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Otaq məlumatları uğurla yeniləndi ✏️");
-        response.put("room", updatedRoom);
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * 🔹 Otağı sil
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> deleteRoom(@PathVariable Long id) {
-        roomService.deleteRoom(id);
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Otaq uğurla silindi 🗑️");
-        response.put("deletedRoomId", id);
-        return ResponseEntity.ok(response);
-    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity<Map<String, Object>> updateRoom(@PathVariable Long id, @RequestBody Room room) {
+//        Room updatedRoom = roomService.updateRoom(id, room);
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("message", "Otaq məlumatları uğurla yeniləndi ✏️");
+//        response.put("room", updatedRoom);
+//        return ResponseEntity.ok(response);
+//    }
+//
+//    /**
+//     * 🔹 Otağı sil
+//     */
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<Map<String, Object>> deleteRoom(@PathVariable Long id) {
+//        roomService.deleteRoom(id);
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("message", "Otaq uğurla silindi 🗑️");
+//        response.put("deletedRoomId", id);
+//        return ResponseEntity.ok(response);
+//    }
 
     /**
      * 🔹 Qalan yerləri göstər

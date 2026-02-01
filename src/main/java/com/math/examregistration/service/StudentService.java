@@ -4,12 +4,14 @@ import com.math.examregistration.dto.StudentDTO;
 import com.math.examregistration.entity.Exam;
 import com.math.examregistration.entity.Room;
 import com.math.examregistration.entity.Student;
+import com.math.examregistration.exception.BadRequestException;
 import com.math.examregistration.exception.StudentAlreadyRegisteredException;
 import com.math.examregistration.repository.ExamRepository;
 import com.math.examregistration.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,17 +28,16 @@ public class StudentService {
     private final ExamRepository examRepository;
 
     // ✅ Yeni qeydiyyat
+    @Transactional
     public Student registerStudent(StudentDTO dto) {
-        log.info("Yeni tələbə qeydiyyatı başladı: {} {} ({})", dto.getName(), dto.getSurname(), dto.getExamId());
+        log.info("Yeni tələbə qeydiyyatı başladı: {} {} (examId={})",
+                dto.getName(), dto.getSurname(), dto.getExamId());
 
-        // 1️⃣ İmtahan tap
+        // 1) İmtahan tap
         Exam exam = examRepository.findById(dto.getExamId())
-                .orElseThrow(() -> {
-                    log.error("İmtahan tapılmadı! ID: {}", dto.getExamId());
-                    return new RuntimeException("İmtahan tapılmadı!");
-                });
+                .orElseThrow(() -> new RuntimeException("İmtahan tapılmadı!"));
 
-        // 2️⃣ Təkrar qeydiyyat yoxlanışı
+        // 2) Təkrar qeydiyyat yoxlanışı
         studentRepository.findByNameAndSurnameAndFatherNameAndGradeAndExam(
                 dto.getName(),
                 dto.getSurname(),
@@ -44,45 +45,72 @@ public class StudentService {
                 dto.getGrade(),
                 exam
         ).ifPresent(s -> {
-            log.warn("Təkrar qeydiyyat cəhdi: {} {} (imtahan ID: {})", dto.getName(), dto.getSurname(), exam.getId());
             throw new StudentAlreadyRegisteredException("Bu şagird artıq bu imtahan üçün qeydiyyatdan keçib!");
         });
 
-        // 3️⃣ Boş otaq tap və oturacaq nömrəsini təyin et (vaxta əsasən)
-        Room room = roomService.assignAvailableRoomByTime(dto.getExamTime());
-        System.out.println(dto.getExamTime());
-        int seatNo = room.getCurrentCount() + 1;
-        log.info("Tələbə üçün otaq təyin olundu: {} (oturacaq №{})", room.getRoomNo(), seatNo);
+        // 3) Otaq + seat seçimi (10:00 vs 11:30)
+        Room room;
+        int seatNo;
 
+        String examTime = dto.getExamTime();
 
-        // 4️⃣ Unikal kod yarat
+        if ("11:30".equals(examTime)) {
+            // 11:30 -> paritet qaydası
+            RoomService.SlotGroup group;
+
+            // Fizika = 7
+            if (dto.getExamId() == 7) {
+                group = RoomService.SlotGroup.PHYSICS;
+            }
+            // Riyaziyyat 9-lar = examId 6 + grade 9
+            else if (dto.getExamId() == 6 && dto.getGrade() == 9) {
+                group = RoomService.SlotGroup.MATH9;
+            } else {
+                throw new BadRequestException("11:30 yalnız Fizika (2) və Riyaziyyat 9-cu sinif (5) üçün nəzərdə tutulub!");
+            }
+
+            RoomService.RoomAssignment ra = roomService.assignRoomFor1130Parity(group);
+            roomService.incrementRoomCountFor1130(ra.getRoom(), group);
+
+            room = ra.getRoom();
+            seatNo = ra.getSeatNo();
+
+        } else {
+            // 10:00 (və ya digər) -> köhnə qayda (A otaqları)
+            room = roomService.assignAvailableRoomByTime(examTime);
+            seatNo = room.getCurrentCount() + 1;
+            roomService.incrementRoomCount(room);
+        }
+
+        log.info("Tələbə üçün otaq təyin olundu: {} (seatNo={})", room.getRoomNo(), seatNo);
+
+        // 4) Unikal kod yarat
         String code = generateUniqueStudentCode();
-        log.debug("Tələbə üçün unikal kod yaradıldı: {}", code);
 
-        // 5️⃣ Yeni tələbə obyektinin yaradılması
+        // 5) Student yarat
         Student student = new Student();
         student.setName(dto.getName());
         student.setSurname(dto.getSurname());
         student.setFatherName(dto.getFatherName());
         student.setGrade(dto.getGrade());
         student.setPhone(dto.getPhone());
+
         student.setBspStudent(dto.isBspStudent());
+        student.setPaymentAmount(dto.getPaymentAmount());
+
         student.setExam(exam);
         student.setRoom(room);
         student.setSeatNo(seatNo);
         student.setStudentCode(code);
-        student.setExamTime(dto.getExamTime());
+        student.setExamTime(examTime);
 
-
-        // 🔹 Uşağın verdiyi məbləği birbaşa yazırıq
-        student.setPaymentAmount(dto.getPaymentAmount());
-
-        // 6️⃣ Yadda saxla
+        // 6) Save
         Student saved = studentRepository.save(student);
-        roomService.incrementRoomCount(room);
 
-        log.info("Tələbə uğurla qeydiyyatdan keçdi: {} {} (ödədi: {} AZN)",
-                saved.getName(), saved.getSurname(), saved.getPaymentAmount());
+        log.info("Tələbə uğurla qeydiyyatdan keçdi: {} {} (examTime={}, room={}, seat={})",
+                saved.getName(), saved.getSurname(), saved.getExamTime(),
+                saved.getRoom().getRoomNo(), saved.getSeatNo());
+
         return saved;
     }
 
@@ -98,12 +126,10 @@ public class StudentService {
     }
 
     public List<Student> getAllStudents() {
-        log.info("Bütün tələbələr gətirilir...");
         return studentRepository.findAllByOrderByIdAsc();
     }
 
     public List<Student> getStudentsByRoom(Long roomId) {
-        log.info("Otaq üzrə tələbələr gətirilir: otaq ID {}", roomId);
         return studentRepository.findAllByRoomId(roomId);
     }
 
@@ -122,11 +148,9 @@ public class StudentService {
     public Map<String, Object> getPaymentStatistics() {
         Object[] stats = (Object[]) studentRepository.getPaymentStatistics();
         Map<String, Object> result = new HashMap<>();
-
         result.put("bspCount", stats[0]);
         result.put("externalCount", stats[1]);
         result.put("totalPayment", stats[2]);
         return result;
     }
-
 }

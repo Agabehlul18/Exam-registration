@@ -11,16 +11,19 @@ import java.util.Optional;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
-    // Eyni şagirdi adı, soyadı, ata adı və sinif üzrə tapmaq
-    Optional<Student> findByNameAndSurnameAndFatherNameAndGradeAndExam(String name, String surname, String fatherName, int grade, Exam exam);
+    Optional<Student> findByNameAndSurnameAndFatherNameAndGradeAndExam(
+            String name, String surname, String fatherName, int grade, Exam exam
+    );
 
-    // ✅ Unikal iş nömrəsinin olub-olmadığını yoxlamaq üçün metod
     boolean existsByStudentCode(String studentCode);
-    // 🔹 Otaq üzrə tələbələri gətirən metod
+
     List<Student> findAllByRoomId(Long roomId);
+
     long countByGrade(int grade);
+
     @Query("SELECT SUM(s.paymentAmount) FROM Student s")
     Double sumPaymentAmount();
+
     List<Student> findAllByOrderByIdAsc();
 
     @Query("""
@@ -32,8 +35,15 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     """)
     Object getPaymentStatistics();
 
-
     @Query("SELECT s.seatNo FROM Student s WHERE s.room.id = :roomId")
     List<Integer> findSeatNosByRoomId(@Param("roomId") Long roomId);
 
+    // ✅ 11:30 üçün seat doluluğunu yoxlamağa lazım olan query
+    @Query("""
+        SELECT s.seatNo
+        FROM Student s
+        WHERE s.room.id = :roomId AND s.examTime = :examTime
+    """)
+    List<Integer> findSeatNosByRoomAndTime(@Param("roomId") Long roomId,
+                                           @Param("examTime") String examTime);
 }

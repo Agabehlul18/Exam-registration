@@ -4,191 +4,215 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>İmtahan Qeydiyyat Sistemi</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root{
+            --blue:#2563eb;
+            --blueSoft:rgba(37,99,235,.12);
+
+            --green:#16a34a;
+            --greenSoft:rgba(22,163,74,.14);
+
+            --bg:#f5f7fb;
+            --card:#ffffff;
+            --text:#0f172a;
+            --muted:#475569;
+
+            --radius:20px;
+            --shadow:0 18px 40px rgba(2,6,23,.10);
+            --shadowHover:0 26px 65px rgba(2,6,23,.16);
         }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: radial-gradient(circle at 20% 30%, #dbeafe, #f1f5f9, #ffffff);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
+        *{margin:0;padding:0;box-sizing:border-box;}
+
+        body{
+            font-family:'Poppins',sans-serif;
+            background:
+                    radial-gradient(circle at 15% 25%, #dbeafe, transparent 45%),
+                    radial-gradient(circle at 85% 80%, #dcfce7, transparent 45%),
+                    var(--bg);
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            padding:24px;
         }
 
-        /* 🔵 Arxa parıltı effekti */
-        body::before {
-            content: '';
-            position: absolute;
-            top: -10%;
-            left: -10%;
-            width: 350px;
-            height: 350px;
-            background: radial-gradient(circle, #93c5fd80, transparent);
-            border-radius: 50%;
-            filter: blur(80px);
+        /* Admin düyməsi */
+        .admin-btn{
+            position:absolute;
+            top:24px;
+            right:24px;
+            text-decoration:none;
+            background:linear-gradient(135deg,var(--blue),#1d4ed8);
+            color:#fff;
+            padding:10px 18px;
+            border-radius:14px;
+            font-weight:600;
+            font-size:.95rem;
+            box-shadow:0 10px 25px rgba(37,99,235,.30);
+            transition:.25s ease;
+        }
+        .admin-btn:hover{
+            transform:translateY(-2px);
+            box-shadow:0 16px 35px rgba(37,99,235,.40);
         }
 
-        body::after {
-            content: '';
-            position: absolute;
-            bottom: -10%;
-            right: -10%;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, #a5b4fc70, transparent);
-            border-radius: 50%;
-            filter: blur(80px);
+        /* Ana konteyner */
+        .container{
+            width:100%;
+            max-width:480px;
+            background:var(--card);
+            border-radius:var(--radius);
+            padding:42px 36px;
+            box-shadow:var(--shadow);
+            text-align:center;
+            animation:fadeIn .6s ease;
         }
 
-        /* 🔹 Admin düyməsi */
-        .admin-btn {
-            position: absolute;
-            top: 25px;
-            right: 25px;
-            background: rgba(59, 130, 246, 0.9);
-            color: #fff;
-            border: none;
-            padding: 10px 22px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            backdrop-filter: blur(6px);
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);
-            transition: all 0.3s ease;
-            text-decoration: none;
+        @keyframes fadeIn{
+            from{opacity:0;transform:translateY(20px)}
+            to{opacity:1;transform:translateY(0)}
         }
 
-        .admin-btn:hover {
-            transform: translateY(-2px) scale(1.03);
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+        h1{
+            font-size:1.9rem;
+            font-weight:700;
+            color:var(--text);
+            letter-spacing:-.5px;
+            margin-bottom:8px;
         }
 
-        /* 🟢 Ana konteyner */
-        .container {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            border-radius: 20px;
-            padding: 45px 40px;
-            max-width: 480px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-            animation: fadeIn 0.6s ease-in-out;
+        .subtitle{
+            color:var(--muted);
+            font-size:1rem;
+            margin-bottom:32px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Düymələr */
+        .buttons-container{
+            display:flex;
+            flex-direction:column;
+            gap:16px;
         }
 
-        h1 {
-            color: #0f172a;
-            font-size: 1.9rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            letter-spacing: -0.5px;
+        .btn-custom{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            padding:15px 18px;
+            border-radius:16px;
+            font-size:1rem;
+            font-weight:600;
+            text-decoration:none;
+            color:#fff;
+            transition:.25s ease;
+            box-shadow:0 10px 24px rgba(0,0,0,.14);
         }
 
-        .subtitle {
-            color: #475569;
-            font-size: 1rem;
-            margin-bottom: 35px;
+        .btn-custom span{
+            display:flex;
+            align-items:center;
+            gap:10px;
         }
 
-        /* 🧩 Düymələr konteyneri */
-        .buttons-container {
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
+        .btn-custom:hover{
+            transform:translateY(-3px);
+            box-shadow:var(--shadowHover);
         }
 
-        /* 🌈 Ümumi düymə stili */
-        .btn-custom {
-            border: none;
-            border-radius: 14px;
-            padding: 14px;
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: white;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            background: linear-gradient(135deg, #93c5fd, #0061ff);
-            box-shadow: 0 5px 18px rgba(59, 130, 246, 0.25);
+        /* XÜSUSİ – Ən çox istifadə olunan */
+        .btn-register{
+            background:linear-gradient(135deg,#22c55e,#16a34a);
+            box-shadow:0 14px 32px rgba(22,163,74,.35);
+            position:relative;
         }
 
-        /* 🎨 Rəng fərqləri */
-        .btn-register { background: linear-gradient(135deg, #ff3958, #ff0027); }
-        .btn-room { background: linear-gradient(135deg, #00710c, #00d621); }
-        .btn-students { background: linear-gradient(135deg, #e9ff10, #ffea00); color: #3b3b3b; }
-        .btn-exam { background: linear-gradient(135deg, #93c5fd, #0858db); }
-        .btn-11 { background: linear-gradient(135deg, #a14fff, #7700a6); }
+        .btn-register::after{
 
-        /* ⚡ Hover effekti */
-        .btn-custom:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            position:absolute;
+            top:-10px;
+            right:16px;
+            font-size:11px;
+            font-weight:700;
+            background:#ecfdf5;
+            color:#166534;
+            padding:4px 8px;
+            border-radius:999px;
+            box-shadow:0 4px 12px rgba(22,163,74,.25);
         }
 
-        /* 📱 Mobil */
-        @media (max-width: 600px) {
-            .container {
-                padding: 35px 25px;
-            }
-            h1 { font-size: 1.6rem; }
-            .btn-custom { font-size: 0.95rem; padding: 12px; }
-            .admin-btn { padding: 8px 16px; font-size: 0.9rem; }
+        /* Digər düymələr */
+        .btn-11{background:linear-gradient(135deg,#6366f1,#4338ca);}
+        .btn-room{background:linear-gradient(135deg,#0ea5e9,#0284c7);}
+        .btn-students{
+            background:linear-gradient(135deg,#fde047,#facc15);
+            color:#3b3b3b;
+        }
+        .btn-exam{background:linear-gradient(135deg,#60a5fa,#2563eb);}
+
+        .arrow{
+            font-size:1.3rem;
+            opacity:.85;
+            transition:.25s ease;
+        }
+        .btn-custom:hover .arrow{
+            transform:translateX(4px);
         }
 
+        /* Mobil */
+        @media(max-width:600px){
+            .container{padding:32px 24px;}
+            h1{font-size:1.6rem;}
+            .btn-custom{font-size:.95rem;padding:13px 15px;}
+            .admin-btn{padding:8px 14px;font-size:.9rem;}
+        }
     </style>
-
 </head>
+
 <body>
-<!-- ✅ Sağ yuxarı Admin Giriş düyməsi -->
+
 <a href="/admin.html" class="admin-btn">🔑 Admin Giriş</a>
 
 <div class="container">
-    <div class="header-section">
-        <h1>İmtahan Qeydiyyat Sistemi</h1>
-        <p class="subtitle">Xoş gəlmisiniz! 🎓</p>
-    </div>
+    <h1>BSP</h1>
+    <h2>İmtahan Qeydiyyat Sistemi</h2>
+
+
+    <p class="subtitle">Xoş gəlmisiniz! 🎓</p>
 
     <div class="buttons-container">
+
         <a href="register.html" class="btn-custom btn-register">
-            <span class="btn-icon">📝</span>
-            <span>İmtahana Qeydiyyat</span>
+            <span>📝 İmtahana Qeydiyyat</span>
+
         </a>
-        <a href="room-detailed.html" class="btn-custom btn-11 ">
-            <span class="btn-icon">🏫</span>
-            <span>Otaq sistemi </span>
+
+        <a href="room-detailed.html" class="btn-custom btn-11">
+            <span>🏫 Otaq sistemi</span>
+            <span class="arrow">›</span>
         </a>
+
         <a href="room.html" class="btn-custom btn-room">
-            <span class="btn-icon">🏫</span>
-            <span>Otaqların İdarə Paneli</span>
+            <span>🧭 Otaqların İdarə Paneli</span>
+            <span class="arrow">›</span>
         </a>
 
         <a href="students.html" class="btn-custom btn-students">
-            <span class="btn-icon">👨‍🎓</span>
-            <span>Bütün Tələbələr</span>
+            <span>👨‍🎓 Bütün Tələbələr</span>
+            <span class="arrow">›</span>
         </a>
 
         <a href="exam.html" class="btn-custom btn-exam">
-            <span class="btn-icon">📘</span>
-            <span>İmtahanların İdarə Paneli</span>
+            <span>📘 İmtahanların İdarə Paneli</span>
+            <span class="arrow">›</span>
         </a>
 
     </div>
 </div>
+
 </body>
 </html>
