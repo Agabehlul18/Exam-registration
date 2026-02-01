@@ -150,7 +150,7 @@
             const res = await fetch(`${API_BASE}/rooms`);
             let rooms = await res.json();
 
-            // Saatı təyin et (A → 10:00, B → 17:00)
+            // Saatı təyin et (A → 10:00, B → 11:30)
             rooms = rooms.map(room => {
                 let examTime = "Naməlum";
                 if (room.roomNo.startsWith("A")) examTime = "10:00";
