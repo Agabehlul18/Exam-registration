@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bütün Tələbələr</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
         :root{
@@ -71,7 +71,7 @@
             padding: 8px 10px;
             border-radius: 999px;
             font-size: 12px;
-            font-weight: 700;
+            font-weight: 800;
             color: #064e3b;
             background: rgba(34,197,94,.12);
             border: 1px solid rgba(34,197,94,.25);
@@ -79,9 +79,7 @@
         }
 
         /* Left: list */
-        .list{
-            padding: 14px 14px 16px;
-        }
+        .list{ padding: 14px 14px 16px; }
 
         .toolbar{
             display:flex;
@@ -96,7 +94,7 @@
             border-radius: 12px;
             border: 1px solid rgba(15,23,42,.10);
             outline:none;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text);
         }
         .search:focus{
@@ -104,19 +102,66 @@
             box-shadow: 0 0 0 4px rgba(34,197,94,.14);
         }
 
-        .students{
+        /* ===== DYNAMIC GROUPS GRID ===== */
+        .groups{
+            display:grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        @media (max-width: 720px){
+            .groups{ grid-template-columns: 1fr; }
+        }
+
+        .group{
+            border: 1px solid rgba(15,23,42,.08);
+            border-radius: 14px;
+            overflow:hidden;
+            background: #fff;
+        }
+
+        .group-head{
+            padding: 10px 12px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap: 10px;
+            border-bottom: 1px solid rgba(15,23,42,.06);
+            background: rgba(34,197,94,.06);
+        }
+
+        .group-title{
+            display:flex;
+            align-items:baseline;
+            gap: 8px;
+            min-width: 0;
+        }
+        .group-title b{
+            font-size: 13px;
+            font-weight: 900;
+            color:#064e3b;
+        }
+        .group-title small{
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .group-body{
+            padding: 10px;
             display:flex;
             flex-direction:column;
             gap: 10px;
         }
 
+        /* Student item */
         .item{
             border: 1px solid var(--border);
             border-radius: 14px;
             padding: 12px 12px;
             display:flex;
             justify-content:space-between;
-            align-items:center;
+            align-items:flex-start;
             gap: 12px;
             background: #fff;
             transition: .18s ease;
@@ -129,46 +174,65 @@
         .meta{
             display:flex;
             flex-direction:column;
-            gap: 4px;
+            gap: 6px;
             min-width: 0;
+            flex: 1;
         }
+
+        /* ✅ AD SOYAD KƏSİLMƏSİN */
         .meta .name{
-            font-weight: 800;
+            font-weight: 900;
             font-size: 14px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            line-height: 1.25;
+            white-space: normal;
+            overflow: visible;
+            text-overflow: unset;
+            word-break: break-word;
         }
+
+        /* ✅ MƏLUMAT SƏLİQƏLİ (ALT-ALTA) */
         .meta .sub{
             font-size: 12px;
             color: var(--muted);
-            font-weight: 600;
+            font-weight: 700;
+            line-height: 1.25;
+            white-space: normal;
+            word-break: break-word;
+        }
+        /* Buraxılış vərəqəsi düyməsi – balaca ölçü */
+        .item .btn{
+            padding: 6px 10px;     /* hündürlük və en azaldıldı */
+            font-size: 11px;       /* yazı balacalaşdı */
+            border-radius: 10px;   /* bir az yumşaq */
+            font-weight: 700;
+            min-height: 28px;
         }
 
         .btn{
             border:none;
-            border-radius: 12px;
-            padding: 10px 12px;
+            border-radius: 8px;
+            padding: 8px 10px;
             cursor:pointer;
-            font-weight: 800;
-            font-size: 13px;
+            font-weight: 900;
+            font-size: 11px;
             color: white;
             background: linear-gradient(135deg, var(--green), var(--green2));
             transition: .18s ease;
             white-space: nowrap;
+            flex: 0 0 auto;
+            align-self: center;
         }
         .btn:hover{ transform: translateY(-1px); }
 
         .empty{
-            padding: 16px;
+            padding: 12px;
             color: var(--muted);
-            font-weight: 700;
+            font-weight: 800;
+            font-size: 13px;
         }
 
         /* Right: card */
-        .card-wrap{
-            padding: 14px;
-        }
+        .card-wrap{ padding: 14px; }
 
         .card{
             border: 2px solid rgba(34,197,94,.55);
@@ -193,25 +257,21 @@
             object-fit: cover;
             flex: 0 0 auto;
         }
-        .title{
-            min-width:0;
-        }
+        .title{ min-width:0; }
         .title h2{
             margin:0;
             font-size: 14px;
             font-weight: 900;
             color:#064e3b;
             line-height: 1.2;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 260px;
+            white-space: normal;         /* ✅ kəsilməsin */
+            word-break: break-word;
         }
         .title p{
             margin: 4px 0 0;
             font-size: 12px;
             color: var(--muted);
-            font-weight: 700;
+            font-weight: 800;
         }
 
         .kv{
@@ -225,26 +285,27 @@
             border: 1px solid rgba(15,23,42,.06);
             background: rgba(255,255,255,.75);
         }
-        .kv strong{ font-weight: 800; }
+        .kv strong{
+            font-weight: 900;
+            max-width: 45%;
+        }
         .kv span{
-            font-weight: 800;
+            font-weight: 900;
             color: rgba(15,23,42,.90);
             text-align:right;
+            max-width: 55%;
+            white-space: normal;     /* ✅ uzun adlar daşmasın */
+            word-break: break-word;
+            line-height: 1.25;
         }
 
-        .actions{
-            display:flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .actions .btn{
-            width: 100%;
-        }
+        .actions{ display:flex; gap: 10px; margin-top: 10px; }
+        .actions .btn{ width: 100%; }
 
         .hint{
             padding: 10px 12px;
             color: var(--muted);
-            font-weight: 700;
+            font-weight: 800;
             font-size: 13px;
         }
     </style>
@@ -263,10 +324,10 @@
 
         <div class="list">
             <div class="toolbar">
-                <input class="search" id="q" placeholder="Axtar: ad, soyad, sinif, otaq..." />
+                <input class="search" id="q" placeholder="Axtar: ad, soyad, sinif, otaq, saat..." />
             </div>
 
-            <div class="students" id="studentsContainer">
+            <div class="groups" id="studentsContainer">
                 <div class="empty">Yüklənir...</div>
             </div>
         </div>
@@ -324,7 +385,24 @@
         return `${dd}.${mm}.${yyyy}`;
     }
 
-    // ==== DATA STORE (onclick problemsiz) ====
+    function normalizeTime(t){
+        const s = safeText(t).trim();
+        if (!s) return "";
+        // "10:00:00" -> "10:00"
+        if (s.length >= 5) return s.slice(0,5);
+        return s;
+    }
+
+    // Saat sort: "09:30" < "10:00" < "11:30"
+    function timeToMinutes(t){
+        const tt = normalizeTime(t);
+        if (!tt || !tt.includes(":")) return 999999;
+        const [h,m] = tt.split(":").map(Number);
+        if (Number.isNaN(h) || Number.isNaN(m)) return 999999;
+        return h*60 + m;
+    }
+
+    // ==== DATA STORE ====
     const STUDENTS_MAP = new Map();
 
     // ==== LOAD ====
@@ -349,45 +427,96 @@
                 return;
             }
 
-            // map doldur
             students.forEach(s => STUDENTS_MAP.set(String(s.id), s));
             badge.textContent = `${students.length} nəfər`;
 
-            // render
-            renderStudents(students);
+            renderDynamicGroups(students);
 
         } catch (err) {
-            container.innerHTML = `<div class="empty">Tələbələr yüklənə bilmir!</div>`;
             console.error(err);
+            document.getElementById('studentsContainer').innerHTML =
+                `<div class="empty">Tələbələr yüklənə bilmir!</div>`;
         }
     }
 
-    function renderStudents(list){
+    // ==== BUILD STUDENT ITEM ====
+    function buildStudentItem(student){
+        const div = document.createElement('div');
+        div.className = 'item';
+
+        const roomNo = student.room?.roomNo || '-';
+        const fullName = `${safeText(student.name)} ${safeText(student.surname)}`.trim();
+        const exTime = normalizeTime(student.examTime || "—");
+
+        div.innerHTML = `
+      <div class="meta">
+        <div class="name">${fullName}</div>
+        <div class="sub">
+          Sinif: ${safeText(student.grade)}<br>
+          Otaq: ${roomNo}<br>
+          Saat: ${exTime || "—"}
+        </div>
+      </div>
+      <button class="btn" data-id="${student.id}">Buraxılış vərəqəsi</button>
+    `;
+
+        div.querySelector('button').addEventListener('click', (e) => {
+            const id = e.currentTarget.getAttribute('data-id');
+            const st = STUDENTS_MAP.get(String(id));
+            if (st) showExamCard(st);
+        });
+
+        return div;
+    }
+
+    // ==== DYNAMIC GROUP RENDER ====
+    function renderDynamicGroups(list){
         const container = document.getElementById('studentsContainer');
         container.innerHTML = '';
 
-        list.forEach(student => {
-            const div = document.createElement('div');
-            div.className = 'item';
+        // 1) Saatlara görə qrupla
+        const groups = new Map(); // time -> students[]
+        list.forEach(s=>{
+            const t = normalizeTime(s.examTime) || "—";
+            if (!groups.has(t)) groups.set(t, []);
+            groups.get(t).push(s);
+        });
 
-            const roomNo = student.room?.roomNo || '-';
-            const fullName = `${safeText(student.name)} ${safeText(student.surname)}`.trim();
+        // 2) Saatları sort et
+        const times = Array.from(groups.keys()).sort((a,b)=> timeToMinutes(a) - timeToMinutes(b));
 
-            div.innerHTML = `
-        <div class="meta">
-          <div class="name">${fullName}</div>
-          <div class="sub">Sinif: ${safeText(student.grade)} • Otaq: ${roomNo} • Saat: ${safeText(student.examTime || "—")}</div>
+        // 3) Render
+        if (times.length === 0){
+            container.innerHTML = `<div class="empty">Tələbə yoxdur.</div>`;
+            return;
+        }
+
+        times.forEach(timeKey=>{
+            const arr = groups.get(timeKey) || [];
+
+            const box = document.createElement('div');
+            box.className = 'group';
+
+            box.innerHTML = `
+        <div class="group-head">
+          <div class="group-title">
+            <b>${timeKey}</b>
+            <small>(${arr.length} nəfər)</small>
+          </div>
+          <span class="badge">${arr.length}</span>
         </div>
-        <button class="btn" data-id="${student.id}">Buraxılış vərəqəsi</button>
+        <div class="group-body"></div>
       `;
 
-            div.querySelector('button').addEventListener('click', (e) => {
-                const id = e.currentTarget.getAttribute('data-id');
-                const st = STUDENTS_MAP.get(String(id));
-                if (st) showExamCard(st);
-            });
+            const body = box.querySelector('.group-body');
 
-            container.appendChild(div);
+            if (arr.length === 0){
+                body.innerHTML = `<div class="empty">Bu saat üçün tələbə yoxdur.</div>`;
+            } else {
+                arr.forEach(st => body.appendChild(buildStudentItem(st)));
+            }
+
+            container.appendChild(box);
         });
     }
 
@@ -398,8 +527,7 @@
 
         const filtered = all.filter(s => {
             const roomNo = s.room?.roomNo || '';
-            const examName =
-                s.exam?.name || s.exam?.title || s.exam?.examName || '';
+            const examName = s.exam?.name || s.exam?.title || s.exam?.examName || '';
 
             const hay = [
                 s.name, s.surname, s.fatherName,
@@ -412,7 +540,7 @@
             return hay.includes(q);
         });
 
-        renderStudents(filtered);
+        renderDynamicGroups(filtered);
     });
 
     // ==== CARD ====
@@ -432,20 +560,16 @@
         document.getElementById('cardCode').innerText = safeText(student.studentCode);
         document.getElementById('cardRoom').innerText = student.room?.roomNo || '-';
         document.getElementById('cardSeat').innerText = safeText(student.seatNo || '1');
-
         document.getElementById('cardBsp').innerText = student.bspStudent ? "Bəli" : "Xeyr";
 
-        // Tarix: bu gün
         document.getElementById('cardDate').innerText = formatDateAZ(new Date());
-
-        // Saat: student.examTime
-        document.getElementById('cardTime').innerText = safeText(student.examTime || "—");
+        document.getElementById('cardTime').innerText = normalizeTime(student.examTime || "—");
 
         document.getElementById('emptyHint').style.display = 'none';
         document.getElementById('cardContainer').style.display = 'block';
     }
 
-    // ==== PRINT (əvvəlki kimi saxlanılıb, başlıq dinamik) ====
+    // ==== PRINT ====
     function printCard() {
         const examTitle = document.getElementById('cardExamTitle').textContent || "İmtahan";
 
@@ -465,16 +589,17 @@
 <html lang="az">
 <head>
   <meta charset="UTF-8">
-<title>${name} - ${examTitle}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>${name} - ${examTitle}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     @page { margin: 0; size: A4; }
     body { margin: 0; padding: 40px; font-family: 'Inter', sans-serif; background: #f6f8fa; }
-    .ticket { width: 90%; margin: auto; background: #fff; border: 8px solid #27ae60; border-radius: 20px; display: flex; flex-direction: row; justify-content: space-between; padding: 30px; }
+    .ticket { width: 90%; margin: auto; background: #fff; border: 8px solid #27ae60; border-radius: 20px; display: flex; justify-content: space-between; padding: 30px; gap: 20px; }
+    .left h2 { margin: 0 0 10px; }
     .info p { margin: 6px 0; font-size: 16px; }
     .social h3 { color: #ff7b00; margin-bottom: 12px; }
-    .qr img { width: 120px; height: 120px; border: 2px solid #27ae60; }
-    .footer { text-align: center; font-weight: 600; color: #27ae60; margin-top: 20px; }
+    .qr img { width: 120px; height: 120px; border: 2px solid #27ae60; border-radius: 12px; }
+    .footer { text-align: center; font-weight: 700; color: #27ae60; margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -488,8 +613,8 @@
         <p><strong>Otaq:</strong> ${room}</p>
         <p><strong>Yer:</strong> ${seat}</p>
         <p><strong>BSP LearnUp tələbəsidir:</strong> ${cardBsp}</p>
-        <p><strong>Tarix:</strong> 08.02.2026</p>
-        <p><strong>Saat:</strong> ${time}</p>
+        <p><strong>Tarix:</strong> ${dateText || "—"}</p>
+        <p><strong>Saat:</strong> ${time || "—"}</p>
         <p><strong>Ünvan:</strong> Bakıxanov qəs., Villa Plaza</p>
       </div>
 
