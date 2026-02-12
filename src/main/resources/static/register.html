@@ -635,9 +635,6 @@
                             <select id="gradeSelect" name="grade" required onchange="updateExamTime()">
                                 <option value="">Sinif seçin</option>
                                 <option value="9">9</option>
-                                <option value="10">10</option>
-                                <option value="11">11</option>
-                                <option value="12">12</option>
                             </select>
                         </div>
                     </div>
@@ -668,8 +665,8 @@
                             <span class="icon">📝</span>
                             <select id="examSelect" name="examId" required onchange="updateSelectedExam(); updateExamTime();">
                                 <option value="">İmtahan seçin</option>
-                                <option value="6">Riyaziyyat buraxılış sınaq 5</option>
-                                <option value="7">Fizika mövzu sınağı 2</option>
+                                <option value="8">Riyaziyyat buraxılış sınaq 6    IX Sinif</option>
+
                             </select>
                         </div>
                     </div>
@@ -680,7 +677,6 @@
                             <span class="icon">⏰</span>
                             <select id="examTime" name="examTime" required>
                                 <option value="10:00">10:00</option>
-                                <option value="11:30">11:30</option>
                             </select>
                         </div>
                     </div>
@@ -776,8 +772,8 @@
 
 <script>
     const EXAMS = {
-        "6": { name: "Riyaziyyat buraxılış sınaq 5" },
-        "7": { name: "Fizika mövzu sınağı 2" }
+        "8": { name: "Riyaziyyat buraxılış sınaq 6 IX Sinif" },
+
     };
 
     function hideResult(){
@@ -1017,7 +1013,7 @@
         <p><strong>Otaq:</strong> ${document.getElementById('cardRoom').textContent}</p>
         <p><strong>Yer:</strong> ${document.getElementById('cardSeat').textContent}</p>
         <p><strong>BSP LearnUp tələbəsidir:</strong> ${document.getElementById('cardBsp').textContent}</p>
-        <p><strong>Tarix:</strong> 08.02.2026</p>
+        <p><strong>Tarix:</strong> 15.02.2026</p>
         <p><strong>Saat:</strong> ${document.getElementById('cardExamTime').textContent}</p>
         <p><strong>Ünvan:</strong> Bakıxanov qəs., Villa Plaza</p>
         <p>Biletin satış tarixi: ${saleDate} | ${saleTime}</p>
